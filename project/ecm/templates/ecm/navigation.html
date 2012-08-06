@@ -1,10 +1,8 @@
-{% load i18n %}
+{% load i18n ecm %}
 
 <div class="well sidebar-nav">
     <ul class="nav nav-list">
         <li class="nav-header">{% trans "Navigation" %}</li>
-        {% for child in object.children.all %}
-            <li><a href="{{ child.get_absolute_url }}">{{ child.title }}</a></li>
-        {% endfor %}
+        {% show_navigation object %}
     </ul>
 </div><!--/.well -->
