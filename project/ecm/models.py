@@ -15,12 +15,12 @@ class CatalogEntry(MPTTModel):
     """
 
     class MPTTMeta:
-        order_insertion_by = ['name']
+        order_insertion_by = ['title']
 
     objects = CatalogEntryManager()
 
     uuid = UUIDField(auto=True)
-    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
 
     content_type = models.ForeignKey('contenttypes.ContentType')
@@ -32,7 +32,7 @@ class CatalogEntry(MPTTModel):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return u"[%s:%s] %s" % (self.content_type.model, self.uuid, self.name)
+        return u"[%s:%s] %s" % (self.content_type.model, self.uuid, self.title)
 
     def get_object(self):
         return self.content_type.get_object_for_this_type(uuid=self.uuid)

@@ -41,32 +41,20 @@
     </div>
 
     <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span2">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-              <li class="nav-header">Sidebar</li>
-              <li class="active"><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li class="nav-header">Sidebar</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li class="nav-header">Sidebar</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span10">
+        <div class="row-fluid">
 
-        </div><!--/span-->
+            <div class="span2">
+                
+                {% include "ecm/navigation.html" %}
+            </div><!--/span-->
+
+            <div class="span9">
+                {% include "ecm/messages.html" %}
+                {% include "ecm/content_actions.html" %}
+                <h1>{% block content_title %}{{ object.title }}{% endblock content_title %}</h1>
+                {% block content %}{% endblock content %}
+            </div><!--/span-->
+
       </div><!--/row-->
 
       <hr>
