@@ -16,6 +16,7 @@ urlpatterns = patterns(
     # admin
     url(r'^admin_tools/', include('admin_tools.urls')),
     (r'^admin/', include(admin.site.urls)),
+    url(r'^', include('ecm.urls')),
 )
 
 if settings.DEBUG:

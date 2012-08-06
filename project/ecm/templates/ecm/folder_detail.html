@@ -1,0 +1,10 @@
+{{ object }}
+
+<ul>
+    {% for child in object.children.all %}
+    <li>
+        <a href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+        <a href="{{ child.get_absolute_edit_url }}">edit</a>
+    </li>
+    {% endfor %}
+</ul>
