@@ -1,0 +1,17 @@
+{% extends "ecm/base.html" %}
+
+{% load i18n %}
+
+{% block content_title %}
+{% trans "Create a new" %} {{ content_type }}
+{% endblock content_title %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {{ form }}
+    <div>
+        <input class="btn btn-primary btn-large" type="submit" value="{% trans 'Create' %}">
+        <a href="../.." class="btn btn-inverse btn-large">{% trans 'Cancel' %}</a>
+    </div>
+</form>
+{% endblock content %}

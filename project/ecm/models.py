@@ -37,18 +37,21 @@ class CatalogEntry(MPTTModel):
     def get_object(self):
         return self.content_type.get_object_for_this_type(uuid=self.uuid)
 
-    def _get_absolute_path(self):
-        path = "/".join([a.slug for a in self.get_ancestors()])
-        return path
+    def get_absolute_path(self):
+        segments = [a.slug for a in self.get_ancestors()]
+        segments.append(self.slug)
+        return "/".join(segments)
 
     @models.permalink
     def get_absolute_url(self):
-        url = self._get_absolute_path()
+        segments = [a.slug for a in self.get_ancestors()]
+        url = '/'.join(segments)
         return ('content_detail', [url, self.slug])
 
     @models.permalink
     def get_absolute_edit_url(self):
-        url = self._get_absolute_path()
+        segments = [a.slug for a in self.get_ancestors()]
+        url = '/'.join(segments)
         return ('content_edit', [url, self.slug])
 
 
