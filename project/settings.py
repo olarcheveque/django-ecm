@@ -61,4 +61,6 @@ SOUTH_TESTS_MIGRATE = False
 
 ADMIN_TOOLS_INDEX_DASHBOARD = 'project.dashboard.CustomIndexDashboard'
 
+ECM_VIEWS_SETTINGS = ('project.ecm.views_settings', )
+
 from conf import *
