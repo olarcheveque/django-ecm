@@ -1,8 +1,8 @@
-{% load i18n ecm %}
+{% load i18n ecm_tags %}
 
 <div class="well sidebar-nav">
     <ul class="nav nav-list">
         <li class="nav-header">{% trans "Navigation" %}</li>
-        {% show_navigation %}
+        {% show_navigation 1 'folder' %}
     </ul>
 </div><!--/.well -->

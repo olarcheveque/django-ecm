@@ -3,6 +3,7 @@
 from django.forms import models as model_forms
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, UpdateView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 
@@ -40,7 +41,8 @@ class ContentMixin(SingleObjectMixin):
         """
         obj = super(ContentMixin, self).get_object(queryset)
         # TODO move & factorize
-        self.model = obj.content_type.model_class()
+        self.content_type = obj.content_type
+        self.model = self.content_type.model_class()
         self._setup_settings(obj.content_type.model)
         return obj.get_object()
 
@@ -101,7 +103,8 @@ class ContentCreateView(ContentMixin, CreateView):
         """
         # TODO move & factorize
         type = self.kwargs.get('content_type').lower()
-        self.model = ContentType.objects.get(model=type).model_class()
+        self.content_type = ContentType.objects.get(model=type)
+        self.model = self.content_type.model_class()
         self._setup_settings(type)
         
         if self.form_class:
@@ -120,3 +123,19 @@ class ContentCreateView(ContentMixin, CreateView):
                 model = self.get_queryset().model
             return model_forms.modelform_factory(model,
                     **{'exclude': self.settings.get_exclude()})
+
+    def form_valid(self, form):
+        parent_slug = self.kwargs.get('parent_slug')
+        obj = form.save(commit=False)
+        obj.content_type = self.content_type
+        obj.parent = Catalog.objects.get(slug=parent_slug)
+        obj.save()
+        self.object = obj
+        info = _("%s was successfully created") % obj.title
+        messages.add_message(self.request, messages.INFO, info)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        info = _("There is error in the form")
+        messages.add_message(self.request, messages.ERROR, info)
+        return super(ContentCreateView, self).form_invalid(form)

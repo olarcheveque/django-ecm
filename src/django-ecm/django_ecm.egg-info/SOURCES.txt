@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+django_ecm.egg-info/PKG-INFO
+django_ecm.egg-info/SOURCES.txt
+django_ecm.egg-info/dependency_links.txt
+django_ecm.egg-info/entry_points.txt
+django_ecm.egg-info/not-zip-safe
+django_ecm.egg-info/top_level.txt
+ecm/__init__.py

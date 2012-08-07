@@ -6,7 +6,6 @@
 .*.swp
 *~
 \#*#
-src/*
 
 # DB de dev
 *.db

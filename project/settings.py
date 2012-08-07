@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     'mptt',
-    'ecm',
+    'ecm.core',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
@@ -61,6 +61,6 @@ SOUTH_TESTS_MIGRATE = False
 
 ADMIN_TOOLS_INDEX_DASHBOARD = 'project.dashboard.CustomIndexDashboard'
 
-ECM_VIEWS_SETTINGS = ('project.ecm.views_settings', )
+ECM_VIEWS_SETTINGS = ('ecm.core.views_settings', )
 
 from conf import *

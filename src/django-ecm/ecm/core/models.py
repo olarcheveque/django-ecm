@@ -14,6 +14,11 @@ class CatalogEntry(MPTTModel):
     """
     """
 
+
+    class Meta:
+        db_table = "ecm_catalog"
+
+
     class MPTTMeta:
         order_insertion_by = ['title']
 
@@ -37,21 +42,19 @@ class CatalogEntry(MPTTModel):
     def get_object(self):
         return self.content_type.get_object_for_this_type(uuid=self.uuid)
 
-    def get_absolute_path(self):
+    def get_context_url(self):
         segments = [a.slug for a in self.get_ancestors()]
-        segments.append(self.slug)
-        return "/".join(segments)
+        url= "/".join(segments)
+        return url
 
     @models.permalink
     def get_absolute_url(self):
-        segments = [a.slug for a in self.get_ancestors()]
-        url = '/'.join(segments)
+        url = self.get_context_url()
         return ('content_detail', [url, self.slug])
 
     @models.permalink
     def get_absolute_edit_url(self):
-        segments = [a.slug for a in self.get_ancestors()]
-        url = '/'.join(segments)
+        url = self.get_context_url()
         return ('content_edit', [url, self.slug])
 
 

@@ -39,7 +39,9 @@ class ViewSettings:
             for ct in allowed_content_type:
                 children.append({'title': _(ct),
                     'url': reverse('content_create',
-                        args=[self.view.object.get_absolute_path(), ct]),
+                        args=[self.view.object.get_context_url(),
+                            self.view.object.slug,
+                            ct]),
                     }
                     )
             add = ({'title': _("Add content"),
@@ -63,3 +65,9 @@ class FolderSettings(ViewSettings):
     """
     """
     allowed_content_type = ('Folder', 'Article', )
+
+
+class ArticleSettings(ViewSettings):
+    """
+    """
+    pass
