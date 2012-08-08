@@ -1,3 +1,5 @@
+{% load ecm_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,16 +18,11 @@
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
+          <div class="container-fluid">
           <a class="brand" href="#">{% block brand %}Django-ECM{% endblock brand %}</a>
           <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-user"></i> Username
+                <i class="icon-user"></i> {{ user.username }}
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
@@ -34,6 +31,7 @@
               <li><a href="#">Sign Out</a></li>
             </ul>
         </div>
+        {% show_navbar %}
 
 
         </div>
@@ -44,8 +42,9 @@
         <div class="row-fluid">
 
             <div class="span2">
-                
-                {% include "ecm/navigation.html" %}
+                {% block leftcolumn %}
+                    {% include "ecm/navigation.html" %}
+                {% endblock leftcolumn %}
             </div><!--/span-->
 
             <div class="span9">
