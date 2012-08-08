@@ -11,18 +11,19 @@ class ViewSettings:
     exclude = ('parent', 'content_type', )
     allowed_content_type = ()
 
-    def __init__(self, view):
-        self.view = view
+    def __init__(self, content=None):
+        self.content = content
+        print content
 
     def get_actions(self):
         """
         Return actions available for this content.
         """
-        if self.view.object is None:
+        if self.content is None:
             return ()
 
-        edit_url = self.view.object.get_absolute_edit_url()
-        view_url = self.view.object.get_absolute_url()
+        edit_url = self.content.get_absolute_edit_url()
+        view_url = self.content.get_absolute_url()
 
         view = ({'title': _("View"), 'url': view_url, 'children': (), })
         edit = ({'title': _("Edit"), 'url': edit_url, 'children': (), })
@@ -36,12 +37,11 @@ class ViewSettings:
         allowed_content_type = self.get_allowed_content_type()
         if len(allowed_content_type) > 0:
             children = []
-            context = "/".join(self.view.object.get_traversal_slugs())
+            context = "/".join(self.content.get_traversal_slugs())
             for ct in allowed_content_type:
                 children.append({'title': _(ct),
                     'url': reverse('content_create',
-                        args=[context,
-                            ct]),
+                        args=[context, ct]),
                     }
                     )
             add = ({'title': _("Add content"),

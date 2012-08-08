@@ -43,10 +43,12 @@ class CatalogEntry(MPTTModel):
         return self.content_type.get_object_for_this_type(uuid=self.uuid)
 
     def get_traversal(self):
-        return list(self.get_ancestors()) + [self, ]
+        traverse = list(self.get_ancestors()) + [self, ]
+        return traverse
 
     def get_traversal_slugs(self):
-        return [a.slug for a in self.get_traversal()]
+        traverse = [a.slug for a in self.get_traversal()]
+        return traverse
 
     @models.permalink
     def get_absolute_url(self):

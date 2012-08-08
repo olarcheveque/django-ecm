@@ -19,14 +19,21 @@ class ContentMixin(SingleObjectMixin):
 
     def get_traversal(self):
         slugs = self.kwargs.get('slugs').split('/')
-        return Catalog.objects.filter(slug__in=slugs)
+        d = {}
+        for seg in Catalog.objects.filter(slug__in=slugs):
+            d[seg.slug] = seg
+        res = []
+        for s in slugs:
+            res.append(d[s])
+        return res
 
-    def _setup_settings(self, model):
+    def _setup_settings(self, model, **kwargs):
         settings_klass = "%sSettings" % model.title()
         for f in settings.ECM_VIEWS_SETTINGS:
             mod = __import__(f, fromlist='.')
             try:
-                self.settings = getattr(mod, settings_klass)(view=self)
+                self.settings = getattr(mod,
+                        settings_klass)(**kwargs)
                 break
             except:
                 pass
@@ -44,12 +51,12 @@ class ContentMixin(SingleObjectMixin):
         """
         Fix the model dynamically
         """
-        obj = self.get_traversal()[0]
-
+        obj = self.get_traversal()[-1]
+        print self.get_traversal()       
         # Setup content Type
         self.content_type = obj.content_type
         self.model = self.content_type.model_class()
-        self._setup_settings(obj.content_type.model)
+        self._setup_settings(obj.content_type.model, **{'content': obj})
 
         return obj.get_object()
 
@@ -111,7 +118,8 @@ class ContentCreateView(ContentMixin, ContentFormView, CreateView):
         type = self.kwargs.get('content_type').lower()
         self.content_type = ContentType.objects.get(model=type)
         self.model = self.content_type.model_class()
-        self._setup_settings(type)
+        self.parent = self.get_traversal()[-1]
+        self._setup_settings(type, **{'content': self.parent})
 
     def get(self, request, *args, **kwargs):
         self._initialize()
@@ -125,10 +133,9 @@ class ContentCreateView(ContentMixin, ContentFormView, CreateView):
         """
         Create content using the context.
         """
-        parent_slug = self.kwargs.get('slugs').split('/')[-1]
         obj = form.save(commit=False)
         obj.content_type = self.content_type
-        obj.parent = Catalog.objects.get(slug=parent_slug)
+        obj.parent = self.parent
         obj.save()
         self.object = obj
 
