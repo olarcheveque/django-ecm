@@ -17,6 +17,10 @@ class ContentMixin(SingleObjectMixin):
     model = Catalog
     settings = None
 
+    def get_traversal(self):
+        slugs = self.kwargs.get('slugs').split('/')
+        return Catalog.objects.filter(slug__in=slugs)
+
     def _setup_settings(self, model):
         settings_klass = "%sSettings" % model.title()
         for f in settings.ECM_VIEWS_SETTINGS:
@@ -40,7 +44,7 @@ class ContentMixin(SingleObjectMixin):
         """
         Fix the model dynamically
         """
-        obj = super(ContentMixin, self).get_object(queryset)
+        obj = self.get_traversal()[0]
 
         # Setup content Type
         self.content_type = obj.content_type
@@ -121,7 +125,7 @@ class ContentCreateView(ContentMixin, ContentFormView, CreateView):
         """
         Create content using the context.
         """
-        parent_slug = self.kwargs.get('parent_slug')
+        parent_slug = self.kwargs.get('slugs').split('/')[-1]
         obj = form.save(commit=False)
         obj.content_type = self.content_type
         obj.parent = Catalog.objects.get(slug=parent_slug)

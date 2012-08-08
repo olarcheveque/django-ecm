@@ -42,20 +42,23 @@ class CatalogEntry(MPTTModel):
     def get_object(self):
         return self.content_type.get_object_for_this_type(uuid=self.uuid)
 
-    def get_context_url(self):
-        segments = [a.slug for a in self.get_ancestors()]
-        url= "/".join(segments)
-        return url
+    def get_traversal(self):
+        return list(self.get_ancestors()) + [self, ]
+
+    def get_traversal_slugs(self):
+        return [a.slug for a in self.get_traversal()]
 
     @models.permalink
     def get_absolute_url(self):
-        url = self.get_context_url()
-        return ('content_detail', [url, self.slug])
+        slugs = self.get_traversal_slugs()
+        url = "/".join(slugs)
+        return ('content_detail', [url, ])
 
     @models.permalink
     def get_absolute_edit_url(self):
-        url = self.get_context_url()
-        return ('content_edit', [url, self.slug])
+        slugs = self.get_traversal_slugs()
+        url = "/".join(slugs)
+        return ('content_edit', [url, ])
 
 
 class Catalog(CatalogEntry):

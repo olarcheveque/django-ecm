@@ -7,3 +7,13 @@ django_ecm.egg-info/entry_points.txt
 django_ecm.egg-info/not-zip-safe
 django_ecm.egg-info/top_level.txt
 ecm/__init__.py
+ecm/core/__init__.py
+ecm/core/admin.py
+ecm/core/forms.py
+ecm/core/models.py
+ecm/core/tests.py
+ecm/core/urls.py
+ecm/core/views.py
+ecm/core/views_settings.py
+ecm/core/templatetags/__init__.py
+ecm/core/templatetags/ecm_tags.py

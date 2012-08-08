@@ -36,11 +36,11 @@ class ViewSettings:
         allowed_content_type = self.get_allowed_content_type()
         if len(allowed_content_type) > 0:
             children = []
+            context = "/".join(self.view.object.get_traversal_slugs())
             for ct in allowed_content_type:
                 children.append({'title': _(ct),
                     'url': reverse('content_create',
-                        args=[self.view.object.get_context_url(),
-                            self.view.object.slug,
+                        args=[context,
                             ct]),
                     }
                     )
