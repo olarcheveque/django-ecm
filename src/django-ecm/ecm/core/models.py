@@ -5,7 +5,6 @@ from django.db import models
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
 
-
 class CatalogEntryManager(models.Manager):
     pass
 
@@ -13,7 +12,9 @@ class CatalogEntryManager(models.Manager):
 class CatalogEntry(MPTTModel):
     """
     """
-
+    detail_view = "ecm.core.views.base.ContentDetailView"
+    create_view = "ecm.core.views.base.ContentCreateView"
+    update_view = "ecm.core.views.base.ContentUpdateView"
 
     class Meta:
         db_table = "ecm_catalog"

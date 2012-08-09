@@ -5,7 +5,8 @@ from django.conf.urls.defaults import patterns, url
 
 from django.contrib.auth.models import User, Group
 
-from views import ContentDetailView, ContentUpdateView, ContentCreateView
+from views.base import ContentCreateView
+from views.dispatcher import ECMView
 
 urlpatterns = patterns('views',
 
@@ -20,15 +21,14 @@ urlpatterns = patterns('views',
         name="groups_list"),
 
     # Entry point
-    url(r'^$', ContentDetailView.as_view(), {'slugs': 'root'}),
+    url(r'^$', ECMView.as_view(action='detail'), {'slugs': 'root'}),
 
     # Contents
-    url(r'(?P<slugs>.*)/view$', ContentDetailView.as_view(),
+    url(r'(?P<slugs>.*)/view$', ECMView.as_view(action='detail'),
         name="content_detail"),
-    url(r'(?P<slugs>.*)/edit$', ContentUpdateView.as_view(),
+    url(r'(?P<slugs>.*)/edit$', ECMView.as_view(action='update'),
     name="content_edit"),
     url(r'(?P<slugs>.*)/create/(?P<content_type>\w+)/$', ContentCreateView.as_view(),
     name="content_create"),
-    url(r'(?P<slugs>.*)/$', ContentDetailView.as_view(),),
 
 )
