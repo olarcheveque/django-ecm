@@ -66,6 +66,7 @@ class CatalogEntry(MPTTModel):
 
 class Catalog(CatalogEntry):
     """
+    Shortcut for CatalogEntry.
     """
 
     class Meta:

@@ -27,9 +27,15 @@ class ECMView(View):
                     cls.__name__, key))
 
         def get_slugs(**kwargs):
+            """
+            Return slugs context from URL.
+            """
             return kwargs.get(cls.context_key).split('/')
 
         def get_traversal(**kwargs):
+            """
+            Get traversal (catalog entry) from URL.
+            """
             slugs = get_slugs(**kwargs)
             unordered_brains = Catalog.objects.filter(slug__in=slugs)
             d = {}
@@ -41,15 +47,24 @@ class ECMView(View):
             return ordered_brains
 
         def view(request, *args, **kwargs):
+            """
+            Lookup the view class and return an instance of.
+            """
+            # Setup the context
             traversal = get_traversal(**kwargs)
             context = traversal[-1].get_object()
             kwargs.update({
                 'traversal': traversal,
                 'context': context,
                 })
+            
+            # Do check in model for considered content to
+            # find to good view URL( action) / content type / content id
             action = initkwargs.get('action', None)
             model_view_attr = "%s_view" % action 
             view_name = getattr(context, model_view_attr, None)
+            if hasattr(view_name, '__call__'):
+                view_name = view_name(request, *args, **kwargs)
             if action is None or view_name is None:
                 raise Exception("ECM View must have an 'action' "
                         "parameter which map on 'action_view' property "
@@ -58,6 +73,7 @@ class ECMView(View):
             klass = path.pop()
             module = __import__(".".join(path), fromlist=".")
             view = getattr(module, klass)
+
             self = view(**initkwargs)
             return self.dispatch(request, *args, **kwargs)
 
