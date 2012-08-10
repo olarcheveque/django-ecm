@@ -7,10 +7,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 from decorators import cached
 
 class CatalogEntryManager(models.Manager):
-    
-    def get_query_set(self):
-        qs = super(CatalogEntryManager, self).get_query_set()
-        return qs.select_related('content_type')
+    pass
+
 
 class CatalogEntry(MPTTModel):
     """

@@ -11,6 +11,13 @@ from ecm.core.views.mixin import TraversableView, ContentMixin, ContentFormMixin
 
 class ContentDetailView(TraversableView, ContentMixin, DetailView):
 
+    def get_context_data(self, **kwargs):
+        data = super(ContentDetailView, self).get_context_data(**kwargs)
+        children = self.object.children.select_related('content_type')
+        extra = {'children': children, }
+        data.update(extra)
+        return data
+
     def get_template_names(self):
         return ("ecm/%s_detail.html" % self.object.content_type.model,
                 "ecm/folder_detail.html",)
