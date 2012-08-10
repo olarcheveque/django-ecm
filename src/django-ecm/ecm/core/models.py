@@ -4,6 +4,7 @@ from django.db import models
 
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
+from decorators import cached
 
 class CatalogEntryManager(models.Manager):
     pass
@@ -51,12 +52,14 @@ class CatalogEntry(MPTTModel):
         traverse = [a.slug for a in self.get_traversal()]
         return traverse
 
+    @cached
     @models.permalink
     def get_absolute_url(self):
         slugs = self.get_traversal_slugs()
         url = "/".join(slugs)
         return ('content_detail', [url, ])
 
+    @cached
     @models.permalink
     def get_absolute_edit_url(self):
         slugs = self.get_traversal_slugs()
