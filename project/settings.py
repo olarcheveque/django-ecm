@@ -4,7 +4,8 @@ import os
 import socket
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as \
         DEFAULT_TEMPLATE_CONTEXT_PROCESSORS
-
+from django.conf.global_settings import MIDDLEWARE_CLASSES as \
+        DEFAULT_MIDDLEWARE_CLASSES 
 # Rapports d'erreurs
 SERVER_EMAIL = 'ne-pas-repondre@auf.org'
 EMAIL_SUBJECT_PREFIX = '[ECM - %s] ' % socket.gethostname()
@@ -52,6 +53,7 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
 )
 
+MIDDLEWARE_CLASSES = DEFAULT_MIDDLEWARE_CLASSES 
 
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),

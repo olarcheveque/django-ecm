@@ -52,17 +52,17 @@ class ECMView(View):
             """
             # Setup the context
             traversal = get_traversal(**kwargs)
-            context = traversal[-1].get_object()
+            node = traversal[-1].get_object()
             kwargs.update({
                 'traversal': traversal,
-                'context': context,
+                'node': node,
                 })
             
             # Do check in model for considered content to
             # find to good view URL( action) / content type / content id
             action = initkwargs.get('action', None)
             model_view_attr = "%s_view" % action 
-            view_name = getattr(context, model_view_attr, None)
+            view_name = getattr(node, model_view_attr, None)
             if hasattr(view_name, '__call__'):
                 view_name = view_name(request, *args, **kwargs)
             if action is None or view_name is None:

@@ -5,19 +5,19 @@ from django import template
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from ecm.core.models import Catalog
-
 register = template.Library()
 
 @register.inclusion_tag('ecm/tags/navigation.html', takes_context=True)
-def show_navigation(context, types=None):
-    root = Catalog.objects.get(parent__isnull=True)
-    nodes = [root, ]
+def show_navigation(context, current_node, types=None):
+    
+    nodes = list(current_node.get_ancestors()) + [current_node, ]
+    descendants = current_node.get_children().select_related('content_type')
+
     if types is None:
-        nodes += [n for n in root.get_descendants()]
+        nodes += [n for n in descendants]
         return {'nodes': nodes}
     else:
-        nodes += [n for n in root.get_descendants() if n.content_type.model in
+        nodes += [n for n in descendants if n.content_type.model in
                 types]
         return {'nodes': nodes}
 

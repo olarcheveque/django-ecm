@@ -13,6 +13,11 @@ from ecm.core.models import Catalog
 class TraversableView(View):
     """
     """
+    def get_context_data(self, **kwargs):
+        data = super(TraversableView, self).get_context_data(**kwargs)
+        data.update(self.kwargs)
+        return data
+
     def get_slugs(self):
         """
         Get parent slugs list from URL.
