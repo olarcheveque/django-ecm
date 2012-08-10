@@ -34,5 +34,8 @@ urlpatterns = patterns('views',
     url(r'(?P<slugs>.*)/create/(?P<content_type>\w+)/$',
         ECMView.as_view(action='create'),
         name="content_create"),
+    url(r'(?P<slugs>.*)/$',
+        ECMView.as_view(action='detail'),
+        name="content_detail"),
 
 )

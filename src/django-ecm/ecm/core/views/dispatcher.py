@@ -4,6 +4,8 @@ from django.views.generic.base import View
 from django.utils.decorators import classonlymethod
 from django.utils.functional import update_wrapper
 
+from django.contrib.contenttypes.models import ContentType
+
 from ecm.core.models import Catalog
 
 
@@ -53,11 +55,22 @@ class ECMView(View):
             # Setup the context
             traversal = get_traversal(**kwargs)
             node = traversal[-1].get_object()
+
+            # Check if content type is not determined by view
+            ct = kwargs.get('content_type', None)
+            if ct is None:
+                content_type = node.content_type
+            else:
+                content_type = ContentType.objects.get(model=ct.lower())
+            model_class = content_type.model_class()
+
+            # Goof stuff to make available in views
             kwargs.update({
                 'traversal': traversal,
                 'node': node,
+                'model': model_class,
                 })
-            
+
             # Do check in model for considered content to
             # find to good view URL( action) / content type / content id
             action = initkwargs.get('action', None)
@@ -75,6 +88,7 @@ class ECMView(View):
             view = getattr(module, klass)
 
             self = view(**initkwargs)
+            self.model = model_class
             return self.dispatch(request, *args, **kwargs)
 
         # take name and docstring from class

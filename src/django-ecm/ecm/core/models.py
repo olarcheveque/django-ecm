@@ -76,9 +76,3 @@ class Catalog(CatalogEntry):
         proxy = True
 
 
-class Folder(CatalogEntry):
-    description = models.CharField(max_length=50)
-
-
-class Article(CatalogEntry):
-    content = models.TextField(max_length=255)

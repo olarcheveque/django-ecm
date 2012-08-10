@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.forms import models as model_forms
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.views.generic.base import View
 from django.views.generic.edit import ModelFormMixin
@@ -10,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import messages
 
-from ecm.core.models import Catalog
 
 class TraversableView(View):
     """
@@ -34,7 +32,6 @@ class TraversableView(View):
 
 
 class ContentMixin(SingleObjectMixin):
-    model = Catalog
     exclude = ('parent', 'content_type', )
     allowed_content_types = ()
 
@@ -66,7 +63,7 @@ class ContentMixin(SingleObjectMixin):
         allowed_content_type = self.get_allowed_content_types()
         if len(allowed_content_type) > 0:
             children = []
-            context = "/".join(self.content.get_traversal_slugs())
+            context = "/".join(self.object.get_traversal_slugs())
             for ct in allowed_content_type:
                 children.append({'title': _(ct),
                     'url': reverse('content_create',

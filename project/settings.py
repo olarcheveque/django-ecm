@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'south',
     'mptt',
     'ecm.core',
+    'ecm.content',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
