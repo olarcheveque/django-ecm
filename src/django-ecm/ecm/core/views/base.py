@@ -14,7 +14,13 @@ class ContentDetailView(TraversableView, ContentMixin, DetailView):
     def get_context_data(self, **kwargs):
         data = super(ContentDetailView, self).get_context_data(**kwargs)
         children = self.object.children.select_related('content_type').all()
-        extra = {'children': children, }
+        node = self.kwargs.get('node')
+        properties = []
+        for f in node._meta.fields:
+            properties.append((f.name, getattr(node, f.name), ))
+        extra = {'children': children,
+            'properties': properties,
+            }
         data.update(extra)
         return data
 
