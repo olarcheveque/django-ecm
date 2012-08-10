@@ -39,8 +39,6 @@ class ContentCreateView(TraversableView, ContentMixin, ContentFormMixin, CreateV
         """
         Create content using the context.
         """
-        import pdb; pdb.set_trace()
-        
         content_type = ContentType.objects.get(
                 model=self.kwargs.get('content_type').lower()
                 )

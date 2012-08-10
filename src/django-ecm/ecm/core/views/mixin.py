@@ -87,7 +87,7 @@ class ContentMixin(SingleObjectMixin):
         """
         Fix the model dynamically
         """
-        obj = self.get_traversal()[-1]
+        obj = self.kwargs.get('node')
         return obj.get_object()
 
 
