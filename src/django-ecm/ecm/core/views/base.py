@@ -2,9 +2,9 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic import DetailView, UpdateView, CreateView
 
-from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 
 from ecm.core.views.mixin import TraversableView, ContentMixin, ContentFormMixin
@@ -29,34 +29,22 @@ class ContentUpdateView(TraversableView, ContentMixin, ContentFormMixin, UpdateV
                 "ecm/folder_edit.html",)
 
 
-class ContentCreateView(ContentMixin, ContentFormMixin, CreateView):
+class ContentCreateView(TraversableView, ContentMixin, ContentFormMixin, CreateView):
 
     def get_template_names(self):
         return ("ecm/%s_create.html" % self.model.__class__.__name__,
                 "ecm/folder_create.html",)
 
-    def _initialize(self):
-        type = self.kwargs.get('content_type').lower()
-        self.content_type = ContentType.objects.get(model=type)
-        self.model = self.content_type.model_class()
-        self.parent = self.get_traversal()[-1]
-        self._setup_settings(type, **{'content': self.parent})
-
-    def get(self, request, *args, **kwargs):
-        self._initialize()
-        return super(ContentCreateView, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self._initialize()
-        return super(ContentCreateView, self).post(request, *args, **kwargs)
-
     def form_valid(self, form):
         """
         Create content using the context.
         """
+        content_type = ContentType.objects.get(
+                model=self.kwargs.get('content_type').lower()
+                )
         obj = form.save(commit=False)
-        obj.content_type = self.content_type
-        obj.parent = self.parent
+        obj.content_type = content_type
+        obj.parent = self.kwargs.get('traversal')[-1]
         obj.save()
         self.object = obj
 

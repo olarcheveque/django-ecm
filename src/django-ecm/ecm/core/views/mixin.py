@@ -2,9 +2,11 @@
 
 from django.forms import models as model_forms
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.views.generic.base import View
 from django.views.generic.edit import ModelFormMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import messages
 
@@ -33,7 +35,50 @@ class TraversableView(View):
 
 class ContentMixin(SingleObjectMixin):
     model = Catalog
-    settings = None
+    exclude = ('parent', 'content_type', )
+    allowed_content_types = ()
+
+    def get_exclude(self):
+        """
+        exclude fields from form
+        """
+        return self.exclude
+
+    def get_allowed_content_types(self):
+        return self.allowed_content_types
+
+    def get_actions(self):
+        if self.object is None:
+            return ()
+
+        edit_url = self.object.get_absolute_edit_url()
+        view_url = self.object.get_absolute_url()
+
+        view = ({'title': _("View"), 'url': view_url, 'children': (), })
+        edit = ({'title': _("Edit"), 'url': edit_url, 'children': (), })
+        states = ({'title': _("State"), 'url': "#",
+            'children': (
+            ({'title': _('Draft'), 'url': "#"}),
+            ({'title': _('Private'), 'url': "#"}),)})
+
+        actions = [view, edit, states, ]
+
+        allowed_content_type = self.get_allowed_content_types()
+        if len(allowed_content_type) > 0:
+            children = []
+            context = "/".join(self.content.get_traversal_slugs())
+            for ct in allowed_content_type:
+                children.append({'title': _(ct),
+                    'url': reverse('content_create',
+                        args=[context, ct]),
+                    }
+                    )
+            add = ({'title': _("Add content"),
+                    'url': '#',
+                    'children': children})
+            actions.append(add)
+
+        return actions
 
     def _setup_settings(self, model, **kwargs):
         settings_klass = "%sSettings" % model.title()
@@ -51,8 +96,8 @@ class ContentMixin(SingleObjectMixin):
 
     def get_context_data(self, **kwargs):
         data = super(ContentMixin, self).get_context_data(**kwargs)
-        data['content_actions'] = self.settings.get_actions()
-        data['content_type'] = self.model._meta.verbose_name
+        data['content_actions'] = self.get_actions()
+        data['content_type'] = self.kwargs.get('node').content_type.model
         return data
 
     def get_object(self, queryset=None):
@@ -60,12 +105,6 @@ class ContentMixin(SingleObjectMixin):
         Fix the model dynamically
         """
         obj = self.get_traversal()[-1]
-
-        # Setup content Type
-        self.content_type = obj.content_type
-        self.model = self.content_type.model_class()
-        self._setup_settings(obj.content_type.model, **{'content': obj})
-
         return obj.get_object()
 
 
@@ -89,8 +128,8 @@ class ContentFormMixin(ModelFormMixin):
                 # Try to get a queryset and extract the model class
                 # from that
                 model = self.get_queryset().model
-            return model_forms.modelform_factory(model,
-                    **{'exclude': self.settings.get_exclude()})
+            return model_forms.modelform_factory(model, **{'exclude':
+                self.get_exclude()})
 
     def form_valid(self, form):
         info = _("%s was successfully updated") % self.object.title
