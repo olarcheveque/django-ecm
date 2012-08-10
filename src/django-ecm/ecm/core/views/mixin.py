@@ -80,20 +80,6 @@ class ContentMixin(SingleObjectMixin):
 
         return actions
 
-    def _setup_settings(self, model, **kwargs):
-        settings_klass = "%sSettings" % model.title()
-        for f in settings.ECM_VIEWS_SETTINGS:
-            mod = __import__(f, fromlist='.')
-            try:
-                self.settings = getattr(mod,
-                        settings_klass)(**kwargs)
-                break
-            except:
-                pass
-        if self.settings is None:
-            raise Exception('There is no settings found for ECM view %s' %
-                    settings_klass)
-
     def get_context_data(self, **kwargs):
         data = super(ContentMixin, self).get_context_data(**kwargs)
         data['content_actions'] = self.get_actions()
