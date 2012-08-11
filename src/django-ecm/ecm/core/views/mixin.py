@@ -52,12 +52,7 @@ class ContentMixin(SingleObjectMixin):
 
         view = ({'title': _("View"), 'url': view_url, 'children': (), })
         edit = ({'title': _("Edit"), 'url': edit_url, 'children': (), })
-        states = ({'title': _("State"), 'url': "#",
-            'children': (
-            ({'title': _('Draft'), 'url': "#"}),
-            ({'title': _('Private'), 'url': "#"}),)})
-
-        actions = [view, edit, states, ]
+        actions = [view, edit, ]
 
         allowed_content_type = self.get_allowed_content_types()
         if len(allowed_content_type) > 0:
