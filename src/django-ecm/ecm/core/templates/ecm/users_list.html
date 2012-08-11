@@ -2,11 +2,9 @@
 
 {% load i18n %}
 
-{% block content_title %}
-{% trans "Users management" %}
-{% endblock content_title %}
+{% block centercolumn %}
 
-{% block content %}
+<h1>{% trans "Users management" %}</h1>
 
 <table class="table table-striped table-condensed">
     <thead>
@@ -40,4 +38,4 @@
         {% endfor %}
     </tbody>
 </table>
-{% endblock content %}
+{% endblock centercolumn %}

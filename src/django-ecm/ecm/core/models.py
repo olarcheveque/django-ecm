@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
+from django.contrib.contenttypes.models import ContentType
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
 from decorators import cached
@@ -26,9 +26,9 @@ class CatalogEntry(MPTTModel):
 
     objects = CatalogEntryManager()
 
-    uuid = UUIDField(auto=True)
+    uuid = UUIDField(auto=True, primary_key=True)
     title = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=100, blank=False, null=True)
 
     content_type = models.ForeignKey('contenttypes.ContentType')
 
@@ -37,6 +37,13 @@ class CatalogEntry(MPTTModel):
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def save(self, **kwargs):
+        if self.content_type_id is None:
+            klass_name = self.__class__.__name__.lower()
+            ct = ContentType.objects.get(model=klass_name)
+            self.content_type = ct
+        super(CatalogEntry, self).save(**kwargs)
 
     def __unicode__(self):
         return u"[%s:%s] %s" % (self.content_type.model, self.uuid, self.title)
@@ -75,4 +82,19 @@ class Catalog(CatalogEntry):
     class Meta:
         proxy = True
 
+
+class BaseContent(CatalogEntry):
+    """
+    """
+
+    class Meta:
+        abstract = True
+
+
+class BaseFolder(BaseContent):
+    """
+    """
+    allowed_content_types = ()
+    class Meta:
+        abstract = True
 

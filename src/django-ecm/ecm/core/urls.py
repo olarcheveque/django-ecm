@@ -22,7 +22,7 @@ urlpatterns = patterns('views',
     # Entry point
     url(r'^$',
         ECMView.as_view(action='detail'),
-        {'slugs': 'root'}),
+        {'slugs': 'ecm'}),
 
     # Contents
     url(r'(?P<slugs>.*)/view$',

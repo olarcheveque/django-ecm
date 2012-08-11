@@ -43,17 +43,13 @@
 
             <div class="span2">
                 {% block leftcolumn %}
-                    {% include "ecm/navigation.html" %}
                 {% endblock leftcolumn %}
             </div><!--/span-->
 
             <div class="span9">
                 {% include "ecm/messages.html" %}
-                {% if content_actions %}
-                    {% include "ecm/content_actions.html" %}
-                {% endif %}
-                <h1>{% block content_title %}{{ object.title }}{% endblock content_title %}</h1>
-                {% block content %}{% endblock content %}
+                {% block centercolumn %}
+                {% endblock centercolumn %}
             </div><!--/span-->
 
       </div><!--/row-->

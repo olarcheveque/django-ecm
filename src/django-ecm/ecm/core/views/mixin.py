@@ -33,7 +33,6 @@ class TraversableView(View):
 
 class ContentMixin(SingleObjectMixin):
     exclude = ('parent', 'content_type', )
-    allowed_content_types = ()
 
     def get_exclude(self):
         """
@@ -42,7 +41,7 @@ class ContentMixin(SingleObjectMixin):
         return self.exclude
 
     def get_allowed_content_types(self):
-        return self.allowed_content_types
+        return self.object.allowed_content_types
 
     def get_actions(self):
         if self.object is None:

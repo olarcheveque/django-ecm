@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.db import models
-from ecm.core.models import CatalogEntry
-
-class Folder(CatalogEntry):
-    """
-    """
-    detail_view = "ecm.content.views.FolderDetailView"
-
-    description = models.CharField(max_length=50)
+from ecm.core.models import BaseFolder
 
 
-class Article(CatalogEntry):
+class Folder(BaseFolder):
     """
     """
-    content = models.TextField(max_length=255)
+    allowed_content_types = ('folder', )
