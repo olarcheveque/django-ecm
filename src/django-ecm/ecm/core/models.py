@@ -1,10 +1,27 @@
 # -*- coding: utf-8 -*-
 
+import inspect
 from django.db import models
+from django.db.models import get_models
+from django.db.models.signals import post_syncdb
+from django.utils.decorators import classonlymethod
+
 from django.contrib.contenttypes.models import ContentType
+
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
 from decorators import cached
+
+
+class ECMRole(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class ECMPermission(models.Model):
+    name = models.CharField(max_length=100)
+    # for grouping purpose
+    flag = models.CharField(max_length=100)
+
 
 class CatalogEntryManager(models.Manager):
     pass
@@ -86,10 +103,23 @@ class Catalog(CatalogEntry):
 class BaseContent(CatalogEntry):
     """
     """
+    default_permissions = [
+            'view',
+            'add',
+            'edit',
+            'delete',
+            ]
+
+    permissions = []
 
     class Meta:
         abstract = True
 
+    @classonlymethod
+    def get_permissions(cls):
+        default = ["%s %s" % (p, cls.__name__) for p in
+                cls.default_permissions]
+        return default + list(cls.permissions)
 
 class BaseFolder(BaseContent):
     """
@@ -98,3 +128,29 @@ class BaseFolder(BaseContent):
     class Meta:
         abstract = True
 
+def create_ecm_permissions(app, created_models, verbosity, **kwargs):
+    app_models = get_models(app)
+
+    def traverse(data, search):
+        if not hasattr(data, '__iter__'):
+            if data == search:
+                return True
+            else:
+                return False
+        if hasattr(data, '__iter__'):
+            found = False
+            for kid in data:
+                found = found | traverse(kid, search)
+            return found
+
+    for model in app_models:
+        bases = inspect.getclasstree(inspect.getmro(model))
+        if traverse(bases, BaseContent):
+            flag = model.__class__.__name__.lower()
+            for perm in model.get_permissions():
+                p, created = ECMPermission.objects.get_or_create(
+                        name=perm, flag=flag)
+                if created:
+                    print "permission '%s' created" % perm
+
+post_syncdb.connect(create_ecm_permissions)
