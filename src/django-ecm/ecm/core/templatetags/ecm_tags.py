@@ -31,5 +31,14 @@ def show_navbar(context, ):
             {'title': _("Groups"),
              'url': reverse('groups_list'),
              'children': (),
-             },)
+             },
+            {'title': _("Permissions"),
+             'url': reverse('permissions_list'),
+             'children': (),
+             },
+            {'title': _("Roles"),
+             'url': reverse('roles_list'),
+             'children': (),
+             },
+            )
     return {'nodes': nodes}

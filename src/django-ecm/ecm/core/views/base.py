@@ -25,21 +25,21 @@ class ContentDetailView(TraversableView, ContentMixin, DetailView):
         return data
 
     def get_template_names(self):
-        return ("ecm/%s_detail.html" % self.object.content_type.model,
-                "ecm/folder_detail.html",)
+        return ("ecm/%s/detail.html" % self.object.content_type.model,
+                "ecm/folder/detail.html",)
 
 class ContentUpdateView(TraversableView, ContentMixin, ContentFormMixin, UpdateView):
 
     def get_template_names(self):
-        return ("ecm/%s_edit.html" % self.object.content_type.model,
-                "ecm/folder_edit.html",)
+        return ("ecm/%s/edit.html" % self.object.content_type.model,
+                "ecm/folder/edit.html",)
 
 
 class ContentCreateView(TraversableView, ContentMixin, ContentFormMixin, CreateView):
 
     def get_template_names(self):
-        return ("ecm/%s_create.html" % self.model.__class__.__name__,
-                "ecm/folder_create.html",)
+        return ("ecm/%s/create.html" % self.model.__class__.__name__,
+                "ecm/folder/create.html",)
 
     def form_valid(self, form):
         """

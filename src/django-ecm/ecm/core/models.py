@@ -146,7 +146,7 @@ def create_ecm_permissions(app, created_models, verbosity, **kwargs):
     for model in app_models:
         bases = inspect.getclasstree(inspect.getmro(model))
         if traverse(bases, BaseContent):
-            flag = model.__class__.__name__.lower()
+            flag = model.__name__
             for perm in model.get_permissions():
                 p, created = ECMPermission.objects.get_or_create(
                         name=perm, flag=flag)
