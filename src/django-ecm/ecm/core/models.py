@@ -19,8 +19,7 @@ class ECMRole(models.Model):
 
 class ECMPermission(models.Model):
     name = models.CharField(max_length=100)
-    # for grouping purpose
-    flag = models.CharField(max_length=100)
+    content_type = models.ForeignKey('contenttypes.ContentType')
 
 
 class CatalogEntryManager(models.Manager):
@@ -146,10 +145,10 @@ def create_ecm_permissions(app, created_models, verbosity, **kwargs):
     for model in app_models:
         bases = inspect.getclasstree(inspect.getmro(model))
         if traverse(bases, BaseContent):
-            flag = model.__name__
+            ct = ContentType.objects.get(model=model.__name__.lower())
             for perm in model.get_permissions():
                 p, created = ECMPermission.objects.get_or_create(
-                        name=perm, flag=flag)
+                        name=perm, content_type=ct)
                 if created:
                     print "permission '%s' created" % perm
 
