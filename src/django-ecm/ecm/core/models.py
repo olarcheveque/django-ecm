@@ -8,6 +8,8 @@ from django.utils.decorators import classonlymethod
 
 from django.contrib.contenttypes.models import ContentType
 
+from ecm.core import toc
+
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
 from decorators import cached
@@ -130,21 +132,8 @@ class BaseFolder(BaseContent):
 def create_ecm_permissions(app, created_models, verbosity, **kwargs):
     app_models = get_models(app)
 
-    def traverse(data, search):
-        if not hasattr(data, '__iter__'):
-            if data == search:
-                return True
-            else:
-                return False
-        if hasattr(data, '__iter__'):
-            found = False
-            for kid in data:
-                found = found | traverse(kid, search)
-            return found
-
     for model in app_models:
-        bases = inspect.getclasstree(inspect.getmro(model))
-        if traverse(bases, BaseContent):
+        if model in toc.models:
             ct = ContentType.objects.get(model=model.__name__.lower())
             for perm in model.get_permissions():
                 p, created = ECMPermission.objects.get_or_create(
