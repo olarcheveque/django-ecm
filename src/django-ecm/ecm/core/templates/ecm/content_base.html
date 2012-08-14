@@ -5,9 +5,6 @@
 {% endblock leftcolumn %}
 
 {% block centercolumn %}
-    {% if content_actions %}
-        {% include "ecm/content_actions.html" %}
-    {% endif %}
     <h1>{% block content_title %}
         {{ object.title }}
         {% endblock content_title %}

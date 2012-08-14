@@ -68,12 +68,11 @@ class ContentMixin(SingleObjectMixin):
                     'url': '#',
                     'children': children})
             actions.append(add)
-
         return actions
 
     def get_context_data(self, **kwargs):
         data = super(ContentMixin, self).get_context_data(**kwargs)
-        data['content_actions'] = self.get_actions()
+        data['actions'] = self.get_actions()
         data['content_type'] = self.kwargs.get('node').content_type.model
         return data
 

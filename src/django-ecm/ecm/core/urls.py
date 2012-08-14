@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from django.views.generic import ListView
 from django.conf.urls.defaults import patterns, url
+from django.views.generic import ListView
 
 from django.contrib.auth.models import User, Group
 
-from models import ECMRole, ECMPermission
-from views.dispatcher import ECMView
+from models import ECMPermission
 
-urlpatterns = patterns('views',
+from ecm.core.views.roles import RoleListView
+from ecm.core.views.roles import RoleCreateView
+from ecm.core.views.dispatcher import ECMView
+
+urlpatterns = patterns(
+    '',
 
     # Users Management
     url(r'users/$', ListView.as_view(
@@ -25,10 +29,11 @@ urlpatterns = patterns('views',
         model=ECMPermission,
         template_name="ecm/permissions/list.html"),
         name="permissions_list"),
-    url(r'roles/$', ListView.as_view(
-        model=ECMRole,
-        template_name="ecm/roles/list.html"),
+
+    url(r'roles/$', RoleListView.as_view(),
         name="roles_list"),
+    url(r'roles/create$', RoleCreateView.as_view(),
+        name="roles_create"),
 
     # Entry point
     url(r'^$',
@@ -50,3 +55,4 @@ urlpatterns = patterns('views',
         name="content_detail"),
 
 )
+

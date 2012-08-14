@@ -48,6 +48,9 @@
 
             <div class="span9">
                 {% include "ecm/messages.html" %}
+                {% if actions %}
+                    {% include "ecm/actions.html" %}
+                {% endif %}
                 {% block centercolumn %}
                 {% endblock centercolumn %}
             </div><!--/span-->
