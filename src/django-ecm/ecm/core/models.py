@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import inspect
 from django.db import models
 from django.db.models import get_models
 from django.db.models.signals import post_syncdb
@@ -13,6 +12,22 @@ from ecm.core import toc
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
 from decorators import cached
+
+
+class ECMWorkflow(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class ECMState(models.Model):
+    workflow = models.ForeignKey('ECMWorkflow')
+    name = models.CharField(max_length=100)
+
+
+class ECMTransition(models.Model):
+    workflow = models.ForeignKey('ECMWorkflow')
+    name = models.CharField(max_length=100)
+    state_initial = models.ForeignKey('ECMState', related_name="+")
+    state_final = models.ForeignKey('ECMState', related_name="+")
 
 
 class ECMRole(models.Model):
@@ -37,7 +52,6 @@ class CatalogEntry(MPTTModel):
 
     class Meta:
         db_table = "ecm_catalog"
-
 
     class MPTTMeta:
         order_insertion_by = ['title']
@@ -101,7 +115,7 @@ class Catalog(CatalogEntry):
         proxy = True
 
 
-class BaseContent(CatalogEntry):
+class ECMBaseContent(CatalogEntry):
     """
     """
     default_permissions = [
@@ -122,12 +136,15 @@ class BaseContent(CatalogEntry):
                 cls.default_permissions]
         return default + list(cls.permissions)
 
-class BaseFolder(BaseContent):
+
+class ECMBaseFolder(ECMBaseContent):
     """
     """
     allowed_content_types = ()
+
     class Meta:
         abstract = True
+
 
 def create_ecm_permissions(app, created_models, verbosity, **kwargs):
     app_models = get_models(app)
