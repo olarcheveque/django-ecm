@@ -1,0 +1,17 @@
+{% extends "ecm/base.html" %}
+
+{% load i18n %}
+
+{% block centercolumn %}
+
+<h1>{% trans "Create a new workflow" %}</h1> 
+
+<form action="" method="post">{% csrf_token %}
+    {{ form }}
+    <div>
+        <input class="btn btn-primary btn-large" type="submit" value="{% trans 'Create' %}">
+        <a href=".." class="btn btn-inverse btn-large">{% trans 'Cancel' %}</a>
+    </div>
+</form>
+
+{% endblock centercolumn %}

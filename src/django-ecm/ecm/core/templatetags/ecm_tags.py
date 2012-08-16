@@ -24,6 +24,10 @@ def show_navigation(context, current_node, types=None):
 @register.inclusion_tag('ecm/tags/navbar.html', takes_context=True)
 def show_navbar(context, ):
     nodes = (
+            {'title': _("Workflows"),
+             'url': reverse('workflows_list'),
+             'children': (),
+             },
             {'title': _("Users"),
              'url': reverse('users_list'),
              'children': (),

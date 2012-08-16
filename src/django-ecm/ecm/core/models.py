@@ -58,7 +58,7 @@ class CatalogEntry(MPTTModel):
 
     objects = CatalogEntryManager()
 
-    uuid = UUIDField(auto=True, primary_key=True)
+    uuid = UUIDField(auto=True, primary_key=True, unique=True)
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, blank=False, null=True)
 
