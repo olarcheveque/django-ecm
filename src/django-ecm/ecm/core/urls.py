@@ -5,10 +5,8 @@ from django.views.generic import ListView
 
 from django.contrib.auth.models import User, Group
 
-from models import ECMPermission
-
-from ecm.core.views.roles import RoleListView
-from ecm.core.views.roles import RoleCreateView
+from ecm.core.views.roles import RoleListView, RoleCreateView
+from ecm.core.views.permissions import PermissionListView
 from ecm.core.views.dispatcher import ECMView
 
 urlpatterns = patterns(
@@ -25,11 +23,8 @@ urlpatterns = patterns(
         name="groups_list"),
 
     # Security Management
-    url(r'permissions/$', ListView.as_view(
-        model=ECMPermission,
-        template_name="ecm/permissions/list.html"),
+    url(r'permissions/$', PermissionListView.as_view(),
         name="permissions_list"),
-
     url(r'roles/$', RoleListView.as_view(),
         name="roles_list"),
     url(r'roles/create$', RoleCreateView.as_view(),
