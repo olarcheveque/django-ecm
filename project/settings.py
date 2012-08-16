@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     'mptt',
+    'ecm.security',
     'ecm.core',
     'ecm.content',
 )
