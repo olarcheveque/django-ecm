@@ -7,6 +7,7 @@ from django.views.generic.edit import ModelFormMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.translation import ugettext_lazy as _
 
+from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 
 
@@ -41,7 +42,10 @@ class ContentMixin(SingleObjectMixin):
         return self.exclude
 
     def get_allowed_content_types(self):
-        return self.object.allowed_content_types
+        if hasattr(self.object, 'allowed_content_types'):
+            return self.object.allowed_content_types
+        else:
+            return ()
 
     def get_actions(self):
         if self.object is None:
@@ -58,10 +62,12 @@ class ContentMixin(SingleObjectMixin):
         if len(allowed_content_type) > 0:
             children = []
             context = "/".join(self.object.get_traversal_slugs())
-            for ct in allowed_content_type:
-                children.append({'title': _(ct),
+            for ct_name in allowed_content_type:
+                ct = ContentType.objects.get(model=ct_name)
+                title = ct.model_class()._meta.verbose_name
+                children.append({'title': title,
                     'url': reverse('content_create',
-                        args=[context, ct]),
+                        args=[context, ct_name]),
                     }
                     )
             add = ({'title': _("Add content"),

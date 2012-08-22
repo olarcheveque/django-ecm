@@ -8,26 +8,30 @@ from django.utils.translation import ugettext_lazy as _
 register = template.Library()
 
 @register.inclusion_tag('ecm/tags/navigation.html', takes_context=True)
-def show_navigation(context, current_node, types=None):
+def show_navigation(context, current_node):
     
-    nodes = list(current_node.get_ancestors()) + [current_node, ]
-    descendants = current_node.get_children().select_related('content_type')
-
-    if types is None:
-        nodes += [n for n in descendants]
-        return {'nodes': nodes}
+    ancestors = list(current_node.get_ancestors())
+    if len(ancestors) > 0:
+        roots = list(ancestors[0].get_siblings())
     else:
-        nodes += [n for n in descendants if n.content_type.model in
-                types]
-        return {'nodes': nodes}
+        roots = []
+    siblings = list(current_node.get_siblings(include_self=True))
+    descendants = \
+        list(current_node.get_children().filter(parent=current_node))
+    if len(descendants) > 0:
+        tree = []
+        for s in siblings:
+            if s.id == current_node.id:
+                tree.append(s)
+                tree += descendants
+            else:
+                tree.append(s)
+    nodes = roots + ancestors + tree
+    return {'nodes': nodes, 'current_node': current_node}
 
 @register.inclusion_tag('ecm/tags/navbar.html', takes_context=True)
 def show_navbar(context, ):
     nodes = (
-            {'title': _("Workflows"),
-             'url': reverse('workflows_list'),
-             'children': (),
-             },
             {'title': _("Users"),
              'url': reverse('users_list'),
              'children': (),
@@ -38,10 +42,6 @@ def show_navbar(context, ):
              },
             {'title': _("Permissions"),
              'url': reverse('permissions_list'),
-             'children': (),
-             },
-            {'title': _("Roles"),
-             'url': reverse('roles_list'),
              'children': (),
              },
             )

@@ -5,9 +5,7 @@ from django.views.generic import ListView
 
 from django.contrib.auth.models import User, Group
 
-from views import RoleListView, RoleCreateView, \
-    WorkflowListView, WorkflowCreateView, \
-    PermissionListView
+from views import PermissionListView
 
 urlpatterns = patterns(
     '',
@@ -25,14 +23,4 @@ urlpatterns = patterns(
     # Security Management
     url(r'permissions/$', PermissionListView.as_view(),
         name="permissions_list"),
-    url(r'roles/$', RoleListView.as_view(),
-        name="roles_list"),
-    url(r'roles/create$', RoleCreateView.as_view(),
-        name="roles_create"),
-
-    # Workflow Management
-    url(r'workflows/$', WorkflowListView.as_view(),
-        name="workflows_list"),
-    url(r'workflows/create$', WorkflowCreateView.as_view(),
-        name="workflows_create"),
 )

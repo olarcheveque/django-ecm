@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block content_title %}
-{% trans "Create a new" %} {{ content_type }}
+{% trans "Create a new" %} {{ model.class_verbose_name }}
 {% endblock content_title %}
 
 {% block content %}

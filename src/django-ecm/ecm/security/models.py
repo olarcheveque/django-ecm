@@ -3,35 +3,48 @@
 from django.db import models
 from django.db.models import get_models
 from django.db.models.signals import post_syncdb
+from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.contenttypes.models import ContentType
 
 from ecm.core import toc
+from ecm.core.models import ECMBaseContent, ECMBaseFolder
 
 
-class ECMWorkflow(models.Model):
-    name = models.CharField(max_length=100)
+class ECMWorkflow(ECMBaseFolder):
+    """
+    """
+    class Meta:
+        verbose_name = _("Workflow")
 
+    allowed_content_types = ('ecmstate', 'ecmtransition', )
+    state_initial = models.ForeignKey('ECMState', related_name="+", null=True)
+toc.register(ECMWorkflow)
+    
 
-class ECMState(models.Model):
-    workflow = models.ForeignKey('ECMWorkflow')
-    name = models.CharField(max_length=100)
+class ECMState(ECMBaseContent):
 
+    class Meta:
+        verbose_name = _("State")
+toc.register(ECMState)
 
-class ECMTransition(models.Model):
-    workflow = models.ForeignKey('ECMWorkflow')
-    name = models.CharField(max_length=100)
+class ECMTransition(ECMBaseContent):
+
+    class Meta:
+        verbose_name = _("Transition")
+
     state_initial = models.ForeignKey('ECMState', related_name="+")
     state_final = models.ForeignKey('ECMState', related_name="+")
+toc.register(ECMTransition)
 
 
-class ECMRole(models.Model):
-    name = models.CharField(max_length=100)
+class ECMRole(ECMBaseContent):
+    pass
 
 
 class ECMPermission(models.Model):
-    name = models.CharField(max_length=100)
-    content_type = models.ForeignKey('contenttypes.ContentType')
+    title = models.CharField(max_length=255)
+    model_type = models.ForeignKey('contenttypes.ContentType')
 
 
 def create_ecm_permissions(app, created_models, verbosity, **kwargs):
@@ -39,11 +52,13 @@ def create_ecm_permissions(app, created_models, verbosity, **kwargs):
 
     for model in app_models:
         if model in toc.models:
-            ct = ContentType.objects.get(model=model.__name__.lower())
-            for perm in model.get_permissions():
-                p, created = ECMPermission.objects.get_or_create(
-                        name=perm, content_type=ct)
-                if created:
-                    print "permission '%s' created" % perm
-
+            try:
+                ct = ContentType.objects.get(model=model.__name__.lower())
+                for perm in model.get_permissions():
+                    p, created = ECMPermission.objects.get_or_create(
+                            title=perm, model_type=ct)
+                    if created:
+                        print "permission '%s' created" % perm
+            except:
+                pass
 post_syncdb.connect(create_ecm_permissions)

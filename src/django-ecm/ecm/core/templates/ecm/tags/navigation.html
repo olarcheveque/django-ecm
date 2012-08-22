@@ -1,11 +1,16 @@
 {% load mptt_tags %}
-
 <ul id="navigation">
     {% recursetree nodes %}
         <li>
             <i class="icon-folder-close"></i>
-            <a href="{{ node.get_absolute_url }}">{{ node.title }}</a>
-            {% if not node.is_leaf_node %}
+            <a href="{{ node.get_absolute_url }}">
+                {% if node.slug == current_node.slug %}
+                    <strong>{{ node.title }}</strong>
+                {% else %}
+                    {{ node.title }}
+                {% endif%}
+            </a>
+            {% if not node.is_leaf_node and node in nodes %}
                 <ul class="children">
                     {{ children }}
                 </ul>

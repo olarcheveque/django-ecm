@@ -14,29 +14,37 @@ class CatalogEntryManager(models.Manager):
     pass
 
 
-class CatalogEntry(MPTTModel):
-    """
-    """
+class ECMEntryMixin:
+
+    class Meta:
+        abstract = True
+
     detail_view = "ecm.core.views.base.ContentDetailView"
     create_view = "ecm.core.views.base.ContentCreateView"
     update_view = "ecm.core.views.base.ContentUpdateView"
 
+    id = UUIDField(auto=True, primary_key=True, unique=True)
+
+    @property
+    def class_verbose_name(self):
+        return self._meta.verbose_name
+
+
+class ECMCatalogEntry(MPTTModel, ECMEntryMixin):
+    """
+    """
     class Meta:
         db_table = "ecm_catalog"
 
-    class MPTTMeta:
-        order_insertion_by = ['title']
-
     objects = CatalogEntryManager()
 
-    uuid = UUIDField(auto=True, primary_key=True, unique=True)
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, blank=False, null=True)
 
     content_type = models.ForeignKey('contenttypes.ContentType')
 
     parent = TreeForeignKey('self', null=True, blank=True,
-            related_name='children')
+            related_name='+')
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -46,13 +54,13 @@ class CatalogEntry(MPTTModel):
             klass_name = self.__class__.__name__.lower()
             ct = ContentType.objects.get(model=klass_name)
             self.content_type = ct
-        super(CatalogEntry, self).save(**kwargs)
+        super(ECMCatalogEntry, self).save(**kwargs)
 
     def __unicode__(self):
-        return u"[%s:%s] %s" % (self.content_type.model, self.uuid, self.title)
+        return u"[%s:%s] %s" % (self.content_type.model, self.id, self.title)
 
     def get_object(self):
-        return self.content_type.get_object_for_this_type(uuid=self.uuid)
+        return self.content_type.get_object_for_this_type(id=self.id)
 
     def get_traversal(self):
         traverse = list(self.get_ancestors()) + [self, ]
@@ -77,7 +85,7 @@ class CatalogEntry(MPTTModel):
         return ('content_edit', [url, ])
 
 
-class Catalog(CatalogEntry):
+class ECMCatalog(ECMCatalogEntry):
     """
     Shortcut for CatalogEntry.
     """
@@ -86,9 +94,7 @@ class Catalog(CatalogEntry):
         proxy = True
 
 
-class ECMBaseContent(CatalogEntry):
-    """
-    """
+class ECMPermissionMixin:
     default_permissions = [
             'view',
             'add',
@@ -98,9 +104,6 @@ class ECMBaseContent(CatalogEntry):
 
     permissions = []
 
-    class Meta:
-        abstract = True
-
     @classonlymethod
     def get_permissions(cls):
         default = ["%s %s" % (p, cls.__name__) for p in
@@ -108,12 +111,31 @@ class ECMBaseContent(CatalogEntry):
         return default + list(cls.permissions)
 
 
-class ECMBaseFolder(ECMBaseContent):
+class ECMBaseContent(ECMCatalogEntry, ECMPermissionMixin):
     """
     """
+    class Meta:
+        abstract = True
+
+
+class ECMFolderMixin:
     allowed_content_types = ()
+
+
+class ECMBaseFolder(ECMBaseContent, ECMFolderMixin):
+    """
+    """
 
     class Meta:
         abstract = True
 
 
+class ECMStandaloneContent(models.Model, ECMPermissionMixin, ECMEntryMixin):
+
+    class Meta:
+        abstract = True
+
+class ECMStandaloneFolder(ECMStandaloneContent, ECMFolderMixin):
+
+    class Meta:
+        abstract = True

@@ -6,7 +6,7 @@ from django.utils.functional import update_wrapper
 
 from django.contrib.contenttypes.models import ContentType
 
-from ecm.core.models import Catalog
+from ecm.core.models import ECMCatalog
 
 
 class ECMView(View):
@@ -39,7 +39,7 @@ class ECMView(View):
             Get traversal (catalog entry) from URL.
             """
             slugs = get_slugs(**kwargs)
-            unordered_brains = Catalog.objects.filter(slug__in=slugs)
+            unordered_brains = ECMCatalog.objects.filter(slug__in=slugs)
             d = {}
             for b in unordered_brains:
                 d[b.slug] = b

@@ -13,9 +13,11 @@
         </tr>
     </thead>
     <tbody>
-        {% for perm in object_list %}
+        {% for wf in object_list %}
         <tr>
-            <td>{{ perm.name }}</td>
+            <td>
+                <a href="{{ wf.get_absolute_url }}">{{ wf.name }}</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
