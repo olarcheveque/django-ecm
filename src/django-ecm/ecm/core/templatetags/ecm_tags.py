@@ -26,6 +26,8 @@ def show_navigation(context, current_node):
                 tree += descendants
             else:
                 tree.append(s)
+    else:
+        tree = siblings
     nodes = roots + ancestors + tree
     return {'nodes': nodes, 'current_node': current_node}
 
