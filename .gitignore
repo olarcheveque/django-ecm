@@ -6,6 +6,7 @@
 .*.swp
 *~
 \#*#
+*.egg-info
 
 # DB de dev
 *.db

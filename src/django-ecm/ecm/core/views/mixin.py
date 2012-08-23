@@ -33,7 +33,7 @@ class TraversableView(View):
 
 
 class ContentMixin(SingleObjectMixin):
-    exclude = ('parent', 'content_type', )
+    exclude = ('parent', 'content_type', 'slug', )
 
     def get_exclude(self):
         """

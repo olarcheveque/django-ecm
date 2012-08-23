@@ -7,6 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
+from uuslug import uuslug
+
 from decorators import cached
 
 
@@ -50,6 +52,9 @@ class ECMCatalogEntry(MPTTModel, ECMEntryMixin):
     date_modified = models.DateTimeField(auto_now=True)
 
     def save(self, **kwargs):
+        if self.slug is None:
+            self.slug = uuslug(self.title, instance=self)
+
         if self.content_type_id is None:
             klass_name = self.__class__.__name__.lower()
             ct = ContentType.objects.get(model=klass_name)
