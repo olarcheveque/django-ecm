@@ -19,8 +19,18 @@ class ECMWorkflow(ECMBaseFolder):
 
     allowed_content_types = ('ecmstate', 'ecmtransition', )
     state_initial = models.ForeignKey('ECMState', related_name="+", null=True)
-toc.register(ECMWorkflow)
     
+    @property
+    def states(self):
+        return self.get_descendants().\
+                filter(content_type__model='ecmstate')
+
+    @property
+    def transitions(self):
+        return self.get_descendants().\
+                filter(content_type__model='ecmtransition')
+
+toc.register(ECMWorkflow)
 
 class ECMState(ECMBaseContent):
 
