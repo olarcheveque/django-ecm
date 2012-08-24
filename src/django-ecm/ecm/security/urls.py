@@ -5,7 +5,7 @@ from django.views.generic import ListView
 
 from django.contrib.auth.models import User, Group
 
-from views import PermissionListView
+from views.permissions import PermissionListView
 
 urlpatterns = patterns(
     '',

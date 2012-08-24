@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.core.management.base import BaseCommand
-from ecm.content.models import ECMSite, ECMWorkflowFolder
+from ecm.content.models import ECMSite
+from ecm.security.models import ECMWorkflowFolder
 
 class Command(BaseCommand):
 
