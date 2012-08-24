@@ -50,13 +50,28 @@ class ContentMixin(SingleObjectMixin):
     def get_actions(self):
         if self.object is None:
             return ()
+        
+        actions = []
 
+        current_url = self.request.get_full_path()
         edit_url = self.object.get_absolute_edit_url()
         view_url = self.object.get_absolute_url()
 
-        view = ({'title': _("View"), 'url': view_url, 'children': (), })
-        edit = ({'title': _("Edit"), 'url': edit_url, 'children': (), })
-        actions = [view, edit, ]
+        if current_url != view_url:
+            view = ({
+                'title': _("View"),
+                'url': view_url,
+                'children': (),
+                })
+            actions.append(view)
+
+        if current_url != edit_url:
+            edit = ({
+                'title': _("Edit"),
+                'url': edit_url,
+                'children': (),
+                })
+            actions.append(edit)
 
         allowed_content_type = self.get_allowed_content_types()
         if len(allowed_content_type) > 0:

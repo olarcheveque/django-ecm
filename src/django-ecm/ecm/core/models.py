@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.utils.decorators import classonlymethod
 
 from django.contrib.contenttypes.models import ContentType
 
@@ -9,36 +8,18 @@ from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
 from uuslug import uuslug
 
+from mixins import ECMEntryMixin, ECMPermissionMixin, \
+        ECMNavigationMixin,  ECMFolderMixin
 from decorators import cached
 
 
-class CatalogEntryManager(models.Manager):
-    pass
-
-
-class ECMEntryMixin:
-
-    class Meta:
-        abstract = True
-
-    detail_view = "ecm.core.views.base.ContentDetailView"
-    create_view = "ecm.core.views.base.ContentCreateView"
-    update_view = "ecm.core.views.base.ContentUpdateView"
-
-    id = UUIDField(auto=True, primary_key=True, unique=True)
-
-    @property
-    def class_verbose_name(self):
-        return self._meta.verbose_name
-
-
-class ECMCatalogEntry(MPTTModel, ECMEntryMixin):
+class ECMCatalogEntry(MPTTModel, ECMEntryMixin, ECMNavigationMixin):
     """
     """
     class Meta:
         db_table = "ecm_catalog"
 
-    objects = CatalogEntryManager()
+    id = UUIDField(auto=True, primary_key=True, unique=True)
 
     title = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, blank=False, null=True)
@@ -99,23 +80,6 @@ class ECMCatalog(ECMCatalogEntry):
         proxy = True
 
 
-class ECMPermissionMixin:
-    default_permissions = [
-            'view',
-            'add',
-            'edit',
-            'delete',
-            ]
-
-    permissions = []
-
-    @classonlymethod
-    def get_permissions(cls):
-        default = ["%s %s" % (p, cls.__name__) for p in
-                cls.default_permissions]
-        return default + list(cls.permissions)
-
-
 class ECMBaseContent(ECMCatalogEntry, ECMPermissionMixin):
     """
     """
@@ -123,24 +87,9 @@ class ECMBaseContent(ECMCatalogEntry, ECMPermissionMixin):
         abstract = True
 
 
-class ECMFolderMixin:
-    allowed_content_types = ()
-
-
 class ECMBaseFolder(ECMBaseContent, ECMFolderMixin):
     """
     """
-
-    class Meta:
-        abstract = True
-
-
-class ECMStandaloneContent(models.Model, ECMPermissionMixin, ECMEntryMixin):
-
-    class Meta:
-        abstract = True
-
-class ECMStandaloneFolder(ECMStandaloneContent, ECMFolderMixin):
 
     class Meta:
         abstract = True

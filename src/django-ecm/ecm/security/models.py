@@ -50,12 +50,16 @@ class ECMState(ECMBaseContent):
 
     class Meta:
         verbose_name = _("State")
+
+    display_in_navigation = False
 toc.register(ECMState)
 
 class ECMTransition(ECMBaseContent):
 
     class Meta:
         verbose_name = _("Transition")
+
+    display_in_navigation = False
 
     state_initial = models.ForeignKey('ECMState', related_name="+")
     state_final = models.ForeignKey('ECMState', related_name="+")
