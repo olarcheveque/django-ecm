@@ -1,0 +1,11 @@
+{% extends "ecm/content_base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+{% with object.workflows as children %}
+    {% include "ecm/children.html" %}
+{% endwith %}
+
+{% endblock content %}

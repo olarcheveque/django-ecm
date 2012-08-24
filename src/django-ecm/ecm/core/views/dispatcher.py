@@ -63,7 +63,7 @@ class ECMView(View):
             else:
                 content_type = ContentType.objects.get(model=ct.lower())
             model_class = content_type.model_class()
-
+            
             # Goof stuff to make available in views
             kwargs.update({
                 'traversal': traversal,
@@ -75,7 +75,7 @@ class ECMView(View):
             # find to good view URL( action) / content type / content id
             action = initkwargs.get('action', None)
             model_view_attr = "%s_view" % action 
-            view_name = getattr(node, model_view_attr, None)
+            view_name = getattr(model_class, model_view_attr, None)
             if hasattr(view_name, '__call__'):
                 view_name = view_name(request, *args, **kwargs)
             if action is None or view_name is None:

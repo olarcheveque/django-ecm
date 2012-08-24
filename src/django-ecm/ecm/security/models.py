@@ -14,17 +14,20 @@ from ecm.core.models import ECMBaseContent, ECMBaseFolder
 class ECMWorkflowFolder(ECMBaseFolder):
     """
     """
-    create_view = "ecm.security.views.workflows.WorkflowFolderCreateView"
     allowed_content_types = ('ecmworkflow', )
 
-    def get_children(self):
-        return ECMWorkflow.objects.all()
+    @property
+    def workflows(self):
+        return self.get_descendants().\
+                filter(content_type__model='ecmworkflow')
 toc.register(ECMWorkflowFolder)
 
 
 class ECMWorkflow(ECMBaseFolder):
     """
     """
+    create_view = 'ecm.security.views.workflows.WorkflowCreateView'
+
     class Meta:
         verbose_name = _("Workflow")
 

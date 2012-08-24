@@ -11,12 +11,12 @@
 
 <h3>{% trans "States" %}</h3>
 {% with object.states as children %}
-    {% include "ecm/ecmworkflow/children.html" %}
+    {% include "ecm/children.html" %}
 {% endwith %}
 
 <h3>{% trans "Transitions" %}</h3>
 {% with object.transitions as children %}
-    {% include "ecm/ecmworkflow/children.html" %}
+    {% include "ecm/children.html" %}
 {% endwith %}
 
 {% endblock content %}
