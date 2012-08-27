@@ -1,0 +1,23 @@
+{% extends "ecm/content_base.html" %}
+
+{% load i18n %}
+
+{% block content_title %}
+    <h1>
+        {% trans "Are you sure to delete :" %} {{ object.title }}?
+    </h1>
+{% endblock content_title %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {{ form }}
+    <div>
+        <input class="btn btn-primary btn-large"
+            type="submit" value="{% trans 'Delete' %}" />
+        <a href="{{ object.get_absolute_url }}"
+            class="btn btn-inverse btn-large">
+            {% trans 'Cancel' %}
+        </a>
+    </div>
+</form>
+{% endblock content %}

@@ -56,22 +56,20 @@ class ContentMixin(SingleObjectMixin):
         current_url = self.request.get_full_path()
         edit_url = self.object.get_absolute_edit_url()
         view_url = self.object.get_absolute_url()
+        delete_url = self.object.get_absolute_delete_url()
 
-        if current_url != view_url:
-            view = ({
-                'title': _("View"),
-                'url': view_url,
-                'children': (),
-                })
-            actions.append(view)
+        def add_action(url, action_title):
+            if current_url != url:
+                view = ({
+                    'title': action_title,
+                    'url': url,
+                    'children': (),
+                    })
+                actions.append(view)
 
-        if current_url != edit_url:
-            edit = ({
-                'title': _("Edit"),
-                'url': edit_url,
-                'children': (),
-                })
-            actions.append(edit)
+        add_action(view_url, _("View"))
+        add_action(edit_url, _("Edit"))
+        add_action(delete_url, _("Delete"))
 
         allowed_content_type = self.get_allowed_content_types()
         if len(allowed_content_type) > 0:

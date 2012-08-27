@@ -70,6 +70,13 @@ class ECMCatalogEntry(MPTTModel, ECMEntryMixin, ECMNavigationMixin):
         url = "/".join(slugs)
         return ('content_edit', [url, ])
 
+    @cached
+    @models.permalink
+    def get_absolute_delete_url(self):
+        slugs = self.get_traversal_slugs()
+        url = "/".join(slugs)
+        return ('content_delete', [url, ])
+
 
 class ECMCatalog(ECMCatalogEntry):
     """

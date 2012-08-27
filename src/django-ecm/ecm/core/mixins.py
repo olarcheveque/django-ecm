@@ -11,6 +11,7 @@ class ECMEntryMixin:
     detail_view = "ecm.core.views.base.ContentDetailView"
     create_view = "ecm.core.views.base.ContentCreateView"
     update_view = "ecm.core.views.base.ContentUpdateView"
+    delete_view = "ecm.core.views.base.ContentDeleteView"
 
     @property
     def class_verbose_name(self):
