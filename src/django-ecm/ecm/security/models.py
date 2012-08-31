@@ -66,8 +66,18 @@ class ECMTransition(ECMBaseContent):
 toc.register(ECMTransition)
 
 
+class ECMRoleFolder(ECMBaseFolder):
+    """
+    """
+    allowed_content_types = ('ecmrole', )
+toc.register(ECMRoleFolder)
+
+
 class ECMRole(ECMBaseContent):
-    pass
+
+    class Meta:
+        verbose_name = _("Role")
+
 
 
 class ECMPermission(models.Model):

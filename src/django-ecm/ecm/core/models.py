@@ -45,6 +45,9 @@ class ECMCatalogEntry(MPTTModel, ECMEntryMixin, ECMNavigationMixin):
     def __unicode__(self):
         return u"[%s:%s] %s" % (self.content_type.model, self.id, self.title)
 
+    def get_brain(self):
+        return ECMCatalogEntry.objects.get(id=self.id)
+
     def get_object(self):
         return self.content_type.get_object_for_this_type(id=self.id)
 
