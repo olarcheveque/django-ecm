@@ -31,7 +31,11 @@ def show_navigation(context, current_node):
     nodes = roots + ancestors + tree
     nodes = [n for n in nodes \
             if n.content_type.model_class().display_in_navigation]
-    return {'nodes': nodes, 'current_node': current_node}
+    return {
+        'nodes': nodes,
+        'current_node': current_node.id,
+        'ancestors': [n.id for n in ancestors],
+        }
 
 @register.inclusion_tag('ecm/tags/navbar.html', takes_context=True)
 def show_navbar(context, ):

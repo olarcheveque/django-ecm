@@ -27,25 +27,14 @@ class ContentDetailView(TraversableView, ContentMixin, DetailView):
         data.update(extra)
         return data
 
-    def get_template_names(self):
-        return ("ecm/%s/detail.html" % self.object.content_type.model,
-                "ecm/folder/detail.html",)
-
 
 class ContentUpdateView(TraversableView,
         ContentMixin, ContentFormMixin, UpdateView):
-
-    def get_template_names(self):
-        return ("ecm/%s/edit.html" % self.object.content_type.model,
-                "ecm/folder/edit.html",)
+    pass
 
 
 class ContentDeleteView(TraversableView, ContentMixin,
         DeleteView):
-
-    def get_template_names(self):
-        return ("ecm/%s/delete.html" % self.object.content_type.model,
-                "ecm/folder/delete.html",)
 
     def get_success_url(self):
         return self.kwargs.get('node').parent.get_absolute_url()
@@ -58,10 +47,6 @@ class ContentDeleteView(TraversableView, ContentMixin,
 
 class ContentCreateView(TraversableView,
         ContentMixin, ContentFormMixin, CreateView):
-
-    def get_template_names(self):
-        return ("ecm/%s/create.html" % self.model.__class__.__name__,
-                "ecm/folder/create.html",)
 
     def form_valid(self, form):
         """

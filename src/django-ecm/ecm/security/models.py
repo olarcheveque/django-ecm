@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from ecm.core import toc
 from ecm.core.models import ECMBaseContent, ECMBaseFolder
-
+from ecm.core.decorators import cached
 
 class ECMWorkflowFolder(ECMBaseFolder):
     """
@@ -36,13 +36,15 @@ class ECMWorkflow(ECMBaseFolder):
     
     @property
     def states(self):
-        return self.get_descendants().\
-                filter(content_type__model='ecmstate')
+        ids = [c.id for c in self.get_descendants().\
+                filter(content_type__model='ecmstate')]
+        return ECMState.objects.filter(id__in=ids)
 
     @property
     def transitions(self):
-        return self.get_descendants().\
-                filter(content_type__model='ecmtransition')
+        ids = [c.id for c in self.get_descendants().\
+                filter(content_type__model='ecmtransition')]
+        return ECMTransition.objects.filter(id__in=ids)
 
 toc.register(ECMWorkflow)
 
@@ -51,7 +53,15 @@ class ECMState(ECMBaseContent):
     class Meta:
         verbose_name = _("State")
 
+    setup_permissions_view = 'ecm.security.views.workflows.SetupPermissionView'
     display_in_navigation = False
+
+    @cached
+    @models.permalink
+    def get_absolute_setup_permissions_url(self):
+        slugs = self.get_traversal_slugs()
+        url = "/".join(slugs)
+        return ('state_setup_permissions', [url, ])
 toc.register(ECMState)
 
 class ECMTransition(ECMBaseContent):

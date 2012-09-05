@@ -14,9 +14,12 @@
         {% for child in children %}
         <tr>
             <td><a href="{{ child.get_absolute_url }}">{{ child.title }}</a></td>
-            <td><a class="btn btn-mini"
+            <td>
+                <a class="btn btn-mini"
                 href="{{ child.get_absolute_edit_url }}">{% trans "edit" %}
                 </a>
+                {% block actions %}
+                {% endblock actions %}
             </td>
         </p>
         {% endfor %}

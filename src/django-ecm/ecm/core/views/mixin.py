@@ -33,7 +33,15 @@ class TraversableView(View):
 
 
 class ContentMixin(SingleObjectMixin):
+    actions = None
     exclude = ('parent', 'content_type', 'slug', )
+
+    def get_template_names(self):
+        action = self.kwargs.get('action')
+        model = self.kwargs.get('model')
+        tpls = ("ecm/%s/%s.html" % (model.__name__.lower(), action),
+                "ecm/folder/%s.html" % action,)
+        return tpls
 
     def get_exclude(self):
         """
@@ -48,6 +56,9 @@ class ContentMixin(SingleObjectMixin):
             return ()
 
     def get_actions(self):
+        if self.actions is not None:
+            return self.actions
+
         if self.object is None:
             return ()
         

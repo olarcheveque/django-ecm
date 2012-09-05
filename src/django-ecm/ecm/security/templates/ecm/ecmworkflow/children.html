@@ -1,0 +1,9 @@
+{% extends "ecm/children.html" %}
+{% load i18n %}
+
+{% block actions %}
+<a class="btn btn-mini"
+    href="{{ child.get_absolute_setup_permissions_url }}">
+    {% trans "Permissions" %}
+</a>
+{% endblock actions %}

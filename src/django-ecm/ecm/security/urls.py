@@ -6,11 +6,15 @@ from django.views.generic import ListView
 from django.contrib.auth.models import User, Group
 
 from views.permissions import PermissionListView
+from ecm.core.views.dispatcher import ECMView
 
 urlpatterns = patterns(
     '',
 
-    # Users Management
+    url(r'(?P<slugs>.*)/setup-permissions$',
+        ECMView.as_view(action='setup_permissions'),
+        name="state_setup_permissions"),
+
     url(r'users/$', ListView.as_view(
         model=User,
         template_name="ecm/users/list.html"),

@@ -64,13 +64,6 @@ class ECMView(View):
                 content_type = ContentType.objects.get(model=ct.lower())
             model_class = content_type.model_class()
             
-            # Goof stuff to make available in views
-            kwargs.update({
-                'traversal': traversal,
-                'node': node,
-                'model': model_class,
-                })
-
             # Do check in model for considered content to
             # find to good view URL( action) / content type / content id
             action = initkwargs.get('action', None)
@@ -86,6 +79,14 @@ class ECMView(View):
             klass = path.pop()
             module = __import__(".".join(path), fromlist=".")
             view = getattr(module, klass)
+
+            # Good stuff to make available in views
+            kwargs.update({
+                'traversal': traversal,
+                'node': node,
+                'model': model_class,
+                'action': action,
+                })
 
             self = view(**initkwargs)
             self.model = model_class

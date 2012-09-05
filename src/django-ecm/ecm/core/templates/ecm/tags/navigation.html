@@ -4,11 +4,17 @@
         <li>
             <i class="icon-folder-close"></i>
             <a href="{{ node.get_absolute_url }}">
-                {% if node.slug == current_node.slug %}
+                {% if node.id == current_node %}
                     <strong>{{ node.title }}</strong>
-                {% else %}
+                {% endif %}
+
+                {% if node.id in ancestors %}
+                    <strong>{{ node.title }}</strong>
+                {% endif %}
+
+                {% if node.id != current_node and node.id not in ancestors %}
                     {{ node.title }}
-                {% endif%}
+                {% endif %}
             </a>
             {% if not node.is_leaf_node and node in nodes %}
                 <ul class="children">
