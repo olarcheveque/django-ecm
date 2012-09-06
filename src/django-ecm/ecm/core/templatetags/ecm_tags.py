@@ -11,16 +11,17 @@ register = template.Library()
 def show_navigation(context, current_node):
     
     def cmp_nodes(x, y):
-        return cmp(x.title, y.title)
+        if x.level == y.level:
+            return cmp(x.title, y.title)
+        else:
+            return cmp(x.level, y.level)
 
     ancestors = list(current_node.get_ancestors())
-    ancestors = sorted(ancestors, cmp=cmp_nodes)
     if len(ancestors) > 0:
         roots = list(ancestors[0].get_siblings())
     else:
         roots = []
     siblings = list(current_node.get_siblings(include_self=True))
-    siblings = sorted(siblings, cmp=cmp_nodes)
     descendants = \
         list(current_node.get_children().filter(parent=current_node))
     if len(descendants) > 0:
@@ -34,6 +35,7 @@ def show_navigation(context, current_node):
     else:
         tree = siblings
     nodes = roots + ancestors + tree
+    nodes = sorted(nodes, cmp=cmp_nodes)
     nodes = [n for n in nodes \
             if n.content_type.model_class().display_in_navigation]
     return {
