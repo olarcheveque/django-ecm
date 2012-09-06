@@ -1,7 +1,6 @@
 {% load i18n %}
 
-<div class="subnav">
-    <ul class="nav nav-pills">
+    <ul class="nav nav-tabs">
         {% for action in actions %}
         {% if action.children %}
             <li class="dropdown">
@@ -17,4 +16,3 @@
         {% endif %}
         {% endfor %}
   </ul>
-</div>

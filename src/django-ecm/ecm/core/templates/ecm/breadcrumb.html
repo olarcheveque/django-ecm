@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<ul class="breadcrumb">
+    <li>{% trans "You are here : " %}</li>
+{% for n in  node.get_ancestors %}
+    <li><a href="{{ n.get_absolute_url }}">{{ n.title }}</a> / </li>
+{% endfor %}
+    <li class="active">{{ node.title }}</li>
+</ul>
