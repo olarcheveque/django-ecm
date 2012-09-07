@@ -10,38 +10,30 @@ register = template.Library()
 @register.inclusion_tag('ecm/tags/navigation.html', takes_context=True)
 def show_navigation(context, current_node):
     
-    def cmp_nodes(x, y):
-        if x.level == y.level:
-            return cmp(x.title, y.title)
-        else:
-            return cmp(x.level, y.level)
+    def sort_nodes(x, y):
+        return cmp(x.title, y.title)
 
     ancestors = list(current_node.get_ancestors())
-    if len(ancestors) > 0:
-        roots = list(ancestors[0].get_siblings())
-    else:
-        roots = []
-    siblings = list(current_node.get_siblings(include_self=True))
-    descendants = \
-        list(current_node.get_children().filter(parent=current_node))
-    if len(descendants) > 0:
-        tree = []
+    nodes = []
+
+    if len(ancestors) == 0:
+        ancestors = [current_node, ]
+    ancestors = sorted(ancestors, cmp=sort_nodes)
+
+    for ancestor in ancestors:
+        siblings = ancestor.get_siblings(include_self=True)
+        siblings = sorted(siblings, cmp=sort_nodes)
         for s in siblings:
-            if s.id == current_node.id:
-                tree.append(s)
-                tree += descendants
-            else:
-                tree.append(s)
-    else:
-        tree = siblings
-    nodes = roots + ancestors + tree
-    nodes = sorted(nodes, cmp=cmp_nodes)
+            nodes.append(s)
+            if s == ancestor:
+                nodes += list(ancestor.get_children())
+
     nodes = [n for n in nodes \
             if n.content_type.model_class().display_in_navigation]
+
     return {
         'nodes': nodes,
-        'current_node': current_node.id,
-        'ancestors': [n.id for n in ancestors],
+        'current_node': current_node,
         }
 
 @register.inclusion_tag('ecm/tags/navbar.html', takes_context=True)

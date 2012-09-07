@@ -32,6 +32,9 @@ class ECMCatalogEntry(MPTTModel, ECMEntryMixin, ECMNavigationMixin):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
+    def __eq__(self, other):
+        return self.id == other.id
+
     def save(self, **kwargs):
         if self.slug is None:
             self.slug = uuslug(self.title, instance=self)
