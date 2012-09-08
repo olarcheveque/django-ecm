@@ -20,8 +20,13 @@ def show_navigation(context, current_node):
         ancestors = [current_node, ]
 
     for ancestor in ancestors:
+        if ancestor in nodes:
+            continue
         siblings = ancestor.get_siblings(include_self=True)
         siblings = sorted(siblings, cmp=sort_nodes)
+        siblings = [s for s in siblings \
+            if s.content_type.model_class().display_in_navigation]
+        
         for s in siblings:
             nodes.append(s)
             if s == ancestor:
@@ -30,7 +35,7 @@ def show_navigation(context, current_node):
 
     nodes = [n for n in nodes \
             if n.content_type.model_class().display_in_navigation]
-
+    
     return {
         'nodes': nodes,
         'current_node': current_node,
