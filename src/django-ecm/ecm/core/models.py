@@ -6,20 +6,12 @@ from django.contrib.contenttypes.models import ContentType
 
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
-from mptt.managers import TreeManager
 from uuslug import uuslug
 
 from mixins import ECMEntryMixin, ECMPermissionMixin, \
         ECMNavigationMixin,  ECMFolderMixin
 from decorators import cached
-
-
-class ECMCatalogManager(TreeManager):
-
-    def get_query_set(self):
-        return super(ECMCatalogManager, self).get_query_set()\
-                .select_related('content_type')
-
+from managers import ECMCatalogManager
 
 class ECMCatalogEntry(MPTTModel, ECMEntryMixin, ECMNavigationMixin):
     """

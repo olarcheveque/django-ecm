@@ -11,6 +11,7 @@ from ecm.core import toc
 from ecm.core.models import ECMBaseContent, ECMBaseFolder
 from ecm.core.decorators import cached
 
+
 class ECMWorkflowFolder(ECMBaseFolder):
     """
     """
@@ -97,7 +98,7 @@ class ECMRole(ECMBaseContent):
 
     class Meta:
         verbose_name = _("Role")
-        ordering = ("title", )
+
 
 class ECMPermission(ECMBaseContent):
     model_type = models.ForeignKey('contenttypes.ContentType')

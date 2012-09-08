@@ -51,3 +51,9 @@ class Command(BaseCommand):
         create_content(ECMRole,
                 slug="administrator", title="Administrator",
                 parent=role_folder)
+        create_content(ECMRole,
+                slug="owner", title="Owner",
+                parent=role_folder)
+        create_content(ECMRole,
+                slug="manager", title="Manager",
+                parent=role_folder)

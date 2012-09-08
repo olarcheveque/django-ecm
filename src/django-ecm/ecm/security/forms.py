@@ -6,9 +6,14 @@ from django.forms.formsets import formset_factory
 from ecm.security.models import ECMRole, ACL
 from widgets import CheckboxesAsCells
 
+
+def roles_sort_by_title():
+    return ECMRole.objects.all().order_by('title')
+
+
 class ACLForm(forms.ModelForm):
     granted_to = forms.ModelMultipleChoiceField(
-            queryset=ECMRole.objects.all(),
+            queryset=roles_sort_by_title(),
             widget=CheckboxesAsCells)
 
     class Meta:
@@ -17,4 +22,4 @@ class ACLForm(forms.ModelForm):
 
 
 ACLFormSet = formset_factory(ACLForm, extra=0)
-setattr(ACLFormSet, "headers", [r.title for r in ECMRole.objects.all()])
+ACLFormSet.headers = lambda self: [r.title for r in roles_sort_by_title()]
