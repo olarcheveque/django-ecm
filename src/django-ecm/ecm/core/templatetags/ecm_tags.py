@@ -18,7 +18,6 @@ def show_navigation(context, current_node):
 
     if len(ancestors) == 0:
         ancestors = [current_node, ]
-    ancestors = sorted(ancestors, cmp=sort_nodes)
 
     for ancestor in ancestors:
         siblings = ancestor.get_siblings(include_self=True)
@@ -26,7 +25,8 @@ def show_navigation(context, current_node):
         for s in siblings:
             nodes.append(s)
             if s == ancestor:
-                nodes += list(ancestor.get_children())
+                children = list(ancestor.get_children())
+                nodes += children
 
     nodes = [n for n in nodes \
             if n.content_type.model_class().display_in_navigation]
