@@ -64,6 +64,16 @@ class ECMState(ECMBaseContent):
         return ('state_setup_permissions', [url, ])
 toc.register(ECMState)
 
+
+class ACL(models.Model):
+    state = models.ForeignKey("ECMState", related_name="+")
+    permission = models.ForeignKey("ECMPermission", related_name="+")
+    granted_to = models.ManyToManyField("ECMRole")
+
+    class Meta:
+        verbose_name = _("ACL")
+
+
 class ECMTransition(ECMBaseContent):
 
     class Meta:
@@ -87,12 +97,11 @@ class ECMRole(ECMBaseContent):
 
     class Meta:
         verbose_name = _("Role")
+        ordering = ("title", )
 
-
-
-class ECMPermission(models.Model):
-    title = models.CharField(max_length=255)
+class ECMPermission(ECMBaseContent):
     model_type = models.ForeignKey('contenttypes.ContentType')
+    display_in_navigation = False
 
 
 def create_ecm_permissions(app, created_models, verbosity, **kwargs):

@@ -7,4 +7,25 @@
 {% endblock content_title %}
 
 {% block content %}
+        <form method="post" action="">
+            {{ formset.management_form }}
+            <table class="table table=stripped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        {% for h in formset.headers %}
+                            <th>{{ h }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                        <tr>
+                            <th>{{ form.initial.permission.title }}</th>
+                            {% for field in form %} {{ field }}{% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
 {% endblock content %}

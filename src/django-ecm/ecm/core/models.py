@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from uuidfield import UUIDField
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.managers import TreeManager
 from uuslug import uuslug
 
 from mixins import ECMEntryMixin, ECMPermissionMixin, \
@@ -13,11 +14,20 @@ from mixins import ECMEntryMixin, ECMPermissionMixin, \
 from decorators import cached
 
 
+class ECMCatalogManager(TreeManager):
+
+    def get_query_set(self):
+        return super(ECMCatalogManager, self).get_query_set()\
+                .select_related('content_type')
+
+
 class ECMCatalogEntry(MPTTModel, ECMEntryMixin, ECMNavigationMixin):
     """
     """
     class Meta:
         db_table = "ecm_catalog"
+
+    _default_manager = ECMCatalogManager()
 
     id = UUIDField(auto=True, primary_key=True, unique=True)
 
