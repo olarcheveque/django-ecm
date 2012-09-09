@@ -32,6 +32,7 @@ STATICFILES_DIRS = (
 )
 
 ROOT_URLCONF = 'project.urls'
+LOGIN_URL = '/login'
 
 INSTALLED_APPS = (
     'admin_tools',

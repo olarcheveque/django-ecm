@@ -19,21 +19,11 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
           <div class="container-fluid">
-          <a class="brand" href="/">{% block brand %}Django-ECM{% endblock brand %}</a>
-          <div class="btn-group pull-right">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="icon-user"></i> {{ user.username }}
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Profile</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Sign Out</a></li>
-            </ul>
-        </div>
-        {% show_navbar %}
-
-
+              <a class="brand" href="/">
+                  {% block brand %}Django-ECM{% endblock brand %}
+              </a>
+              {% include "ecm/user.html" %}
+              {% show_navbar %}
         </div>
       </div>
     </div>

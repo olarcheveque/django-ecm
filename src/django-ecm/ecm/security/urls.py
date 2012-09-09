@@ -11,6 +11,15 @@ from ecm.core.views.dispatcher import ECMView
 urlpatterns = patterns(
     '',
 
+    url(r'^login/$',
+        'django.contrib.auth.views.login',
+        {'template_name': 'admin/login.html'},
+        name='login'),
+    url(r'^logout/$',
+        'django.contrib.auth.views.logout',
+        name='logout'),
+
+
     url(r'(?P<slugs>.*)/setup-permissions$',
         ECMView.as_view(action='setup_permissions'),
         name="state_setup_permissions"),

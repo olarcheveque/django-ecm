@@ -5,6 +5,7 @@ from django.utils.decorators import classonlymethod
 from django.utils.functional import update_wrapper
 
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.decorators import login_required
 
 from ecm.core.models import ECMCatalog
 
@@ -48,6 +49,7 @@ class ECMView(View):
                 ordered_brains.append(d[s])
             return ordered_brains
 
+        @login_required
         def view(request, *args, **kwargs):
             """
             Lookup the view class and return an instance of.
