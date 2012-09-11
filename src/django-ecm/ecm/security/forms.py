@@ -13,6 +13,7 @@ def roles_sort_by_title():
 
 class ACLForm(forms.ModelForm):
     granted_to = forms.ModelMultipleChoiceField(
+            required=False,
             queryset=roles_sort_by_title(),
             widget=CheckboxesAsCells)
 

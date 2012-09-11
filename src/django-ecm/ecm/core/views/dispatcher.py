@@ -7,6 +7,8 @@ from django.utils.functional import update_wrapper
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 
+from auf.django.permissions import require_permission
+
 from ecm.core.models import ECMCatalog
 
 
@@ -50,12 +52,21 @@ class ECMView(View):
             return ordered_brains
 
         @login_required
+
         def view(request, *args, **kwargs):
             """
             Lookup the view class and return an instance of.
             """
             # Setup the context
             traversal = get_traversal(**kwargs)
+            
+            # check for access granted in traversal
+            for seg in traversal:
+                obj = seg.get_object()
+                seg_ct = obj.__class__.__name__
+                perm = 'access %s' % seg_ct
+                require_permission(request.user, perm, obj=obj)
+
             node = traversal[-1].get_object()
 
             # Check if content type is not determined by view

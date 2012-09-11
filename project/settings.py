@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'ecm.security',
     'ecm.core',
     'ecm.content',
+    'auf.django.permissions',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
@@ -56,7 +57,9 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
 )
 
-MIDDLEWARE_CLASSES = DEFAULT_MIDDLEWARE_CLASSES 
+MIDDLEWARE_CLASSES = DEFAULT_MIDDLEWARE_CLASSES + (
+    'auf.django.permissions.PermissionDeniedMiddleware',
+)
 
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
@@ -66,6 +69,13 @@ SOUTH_TESTS_MIGRATE = False
 
 ADMIN_TOOLS_INDEX_DASHBOARD = 'project.dashboard.CustomIndexDashboard'
 
-ECM_VIEWS_SETTINGS = ('ecm.core.views_settings', )
+AUTHENTICATION_BACKENDS = (
+    'auf.django.permissions.AuthenticationBackend',
+)
+
+ROLE_PROVIDERS = (
+    'ecm.security.roles_providers.auth',
+    'ecm.security.roles_providers.owner',
+)
 
 from conf import *

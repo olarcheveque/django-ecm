@@ -24,6 +24,7 @@ class ECMNavigationMixin:
 
 class ECMPermissionMixin:
     default_permissions = [
+            'access',
             'view',
             'add',
             'edit',

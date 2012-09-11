@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.db.models import get_models
+from django.db.models import get_models, Q
 from django.db.models.signals import post_syncdb
 from django.utils.translation import ugettext_lazy as _
 
@@ -87,6 +87,11 @@ class ECMTransition(ECMBaseContent):
 toc.register(ECMTransition)
 
 
+class ECMPermission(ECMBaseContent):
+    model_type = models.ForeignKey('contenttypes.ContentType')
+    display_in_navigation = False
+
+
 class ECMRoleFolder(ECMBaseFolder):
     """
     """
@@ -95,15 +100,31 @@ toc.register(ECMRoleFolder)
 
 
 class ECMRole(ECMBaseContent):
+    user = None
+    obj = None
 
     class Meta:
         verbose_name = _("Role")
 
+    def get_filter_for_perm(self, perm, model):
+        try:
+            permission = ECMPermission.objects.get(slug=perm.lower())
+        except ECMPermission.DoesNotExist:
+            return False
 
-class ECMPermission(ECMBaseContent):
-    model_type = models.ForeignKey('contenttypes.ContentType')
-    display_in_navigation = False
+        state = getattr(self.obj, 'state', None)
+        
+        # TODO for testing purposes, should have a state
+        if not state:
+            state = ECMWorkflow.objects.all()[0].states[0]
 
+        try:
+            acl = ACL.objects.get(state=state, permission=permission)
+        except ACL.DoesNotExist:
+            return False
+
+        return acl in acl.granted_to.all()
+    
 
 def create_ecm_permissions(app, created_models, verbosity, **kwargs):
     app_models = get_models(app)

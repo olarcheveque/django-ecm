@@ -4,11 +4,36 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic.base import TemplateResponseMixin
 
 from django.contrib import messages
 
 from ecm.core.views.mixin import TraversableView, ContentMixin, \
-        ContentFormMixin
+        ContentFormMixin, FormMessageMixin
+
+class ContentFormsetView(TraversableView, TemplateResponseMixin,
+        ContentMixin, FormMessageMixin):
+
+    def get_success_url(self):
+        return self.request.get_full_path()
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        kwargs.update({ 'form': form,})
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        kwargs.update({ 'form': form,})
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class ContentDetailView(TraversableView, ContentMixin, DetailView):

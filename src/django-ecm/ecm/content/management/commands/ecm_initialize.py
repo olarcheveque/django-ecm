@@ -5,6 +5,7 @@ from ecm.content.models import ECMSite
 from ecm.security.models import ECMWorkflow, ECMWorkflowFolder
 from ecm.security.models import ECMState, ECMTransition
 from ecm.security.models import ECMRole, ECMRoleFolder
+from ecm.security.roles import OWNER, ANONYMOUS, AUTHENTICATED
 
 
 def create_content(klass, **kwargs):
@@ -45,14 +46,14 @@ class Command(BaseCommand):
         role_folder = create_content(ECMRoleFolder,
                 slug="roles", title="Roles")
         create_content(ECMRole,
-                slug="anonymous", title="Anonymous", parent=role_folder)
+                slug=ANONYMOUS, title=ANONYMOUS.title(), parent=role_folder)
         create_content(ECMRole,
-                slug="member", title="Member", parent=role_folder)
+                slug=AUTHENTICATED, title=AUTHENTICATED.title(), parent=role_folder)
         create_content(ECMRole,
                 slug="administrator", title="Administrator",
                 parent=role_folder)
         create_content(ECMRole,
-                slug="owner", title="Owner",
+                slug=OWNER, title=OWNER.title(),
                 parent=role_folder)
         create_content(ECMRole,
                 slug="manager", title="Manager",

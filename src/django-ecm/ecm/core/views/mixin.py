@@ -3,7 +3,7 @@
 from django.forms import models as model_forms
 from django.core.urlresolvers import reverse
 from django.views.generic.base import View
-from django.views.generic.edit import ModelFormMixin
+from django.views.generic.edit import ModelFormMixin, FormMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.translation import ugettext_lazy as _
 
@@ -113,8 +113,20 @@ class ContentMixin(SingleObjectMixin):
         obj = self.kwargs.get('node')
         return obj.get_object()
 
+class FormMessageMixin(FormMixin):
 
-class ContentFormMixin(ModelFormMixin):
+    def form_valid(self, form):
+        info = _("%s was successfully updated") % self.object.title
+        messages.add_message(self.request, messages.INFO, info)
+        return super(FormMessageMixin, self).form_valid(form)
+
+    def form_invalid(self, form):
+        info = _("There is error in the form")
+        messages.add_message(self.request, messages.ERROR, info)
+        return super(FormMessageMixin, self).form_invalid(form)
+
+
+class ContentFormMixin(FormMessageMixin, ModelFormMixin):
 
     def get_form_class(self):
         """
@@ -136,15 +148,3 @@ class ContentFormMixin(ModelFormMixin):
                 model = self.get_queryset().model
             return model_forms.modelform_factory(model, **{'exclude':
                 self.get_exclude()})
-
-    def form_valid(self, form):
-        info = _("%s was successfully updated") % self.object.title
-        messages.add_message(self.request, messages.INFO, info)
-        return super(ContentFormMixin, self).form_valid(form)
-
-    def form_invalid(self, form):
-        info = _("There is error in the form")
-        messages.add_message(self.request, messages.ERROR, info)
-        return super(ContentFormMixin, self).form_invalid(form)
-
-
