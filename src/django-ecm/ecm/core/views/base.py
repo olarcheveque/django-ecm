@@ -11,6 +11,8 @@ from django.contrib import messages
 from ecm.core.views.mixin import TraversableView, ContentMixin, \
         ContentFormMixin, FormMessageMixin
 
+from ecm.security.models import Owner
+
 class ContentFormsetView(TraversableView, TemplateResponseMixin,
         ContentMixin, FormMessageMixin):
 
@@ -31,10 +33,14 @@ class ContentFormsetView(TraversableView, TemplateResponseMixin,
         form = self.get_form(form_class)
         kwargs.update({ 'form': form,})
         if form.is_valid():
+            self.save(form)
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
+    def save(self, form):
+        for f in form:
+            f.save()
 
 class ContentDetailView(TraversableView, ContentMixin, DetailView):
 
@@ -84,6 +90,8 @@ class ContentCreateView(TraversableView,
         obj.content_type = content_type
         obj.parent = self.kwargs.get('traversal')[-1]
         obj.save()
+        Owner(user=self.request.user, content_id=obj.id).save()
+
         self.object = obj
         
         info = _("%s was successfully created") % obj.title

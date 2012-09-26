@@ -70,10 +70,12 @@ SOUTH_TESTS_MIGRATE = False
 ADMIN_TOOLS_INDEX_DASHBOARD = 'project.dashboard.CustomIndexDashboard'
 
 AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
     'auf.django.permissions.AuthenticationBackend',
 )
 
 ROLE_PROVIDERS = (
+    'ecm.security.roles_providers.superuser',
     'ecm.security.roles_providers.auth',
     'ecm.security.roles_providers.owner',
 )

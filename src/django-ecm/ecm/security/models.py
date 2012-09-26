@@ -67,14 +67,20 @@ toc.register(ECMState)
 
 
 class ACL(models.Model):
-    state = models.ForeignKey("ECMState", related_name="+")
-    permission = models.ForeignKey("ECMPermission", related_name="+")
+    state = models.ForeignKey("ECMState",
+            editable=False, related_name="+")
+    permission = models.ForeignKey("ECMPermission",
+            editable=False, related_name="+")
     granted_to = models.ManyToManyField("ECMRole")
 
     class Meta:
         verbose_name = _("ACL")
 
-
+    def __unicode__(self):
+        return u"%s %s" % (
+                self.state.title,
+                self.permission.title,
+                )
 class ECMTransition(ECMBaseContent):
 
     class Meta:
@@ -100,8 +106,6 @@ toc.register(ECMRoleFolder)
 
 
 class ECMRole(ECMBaseContent):
-    user = None
-    obj = None
 
     class Meta:
         verbose_name = _("Role")
@@ -124,7 +128,26 @@ class ECMRole(ECMBaseContent):
             return False
 
         return acl in acl.granted_to.all()
-    
+
+
+class SuperuserRole:
+
+    def has_perm(self, perm):
+        return True
+
+    def get_filter_for_perm(self, perm, model):
+        return True
+
+class Owner(models.Model):
+    user = models.ForeignKey("auth.User", related_name="+")
+    content = models.ForeignKey("core.ECMCatalog", related_name="+")
+
+    def get_filter_for_perm(self, perm, model):
+        if 'user' in model.fields.keys():
+            return Q(user=self.user)
+        else:
+            return False
+
 
 def create_ecm_permissions(app, created_models, verbosity, **kwargs):
     app_models = get_models(app)

@@ -19,8 +19,8 @@ class ACLForm(forms.ModelForm):
 
     class Meta:
         model = ACL
-        exclude = ('state', 'permission', )
+        exclude = ('state', )
 
 
 ACLFormSet = formset_factory(ACLForm, extra=0)
-ACLFormSet.headers = lambda self: [r.title for r in roles_sort_by_title()]
+ACLFormSet.headers = [r.title for r in roles_sort_by_title()]

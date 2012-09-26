@@ -5,7 +5,6 @@ from django.utils.decorators import classonlymethod
 from django.utils.functional import update_wrapper
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.decorators import login_required
 
 from auf.django.permissions import require_permission
 
@@ -51,7 +50,6 @@ class ECMView(View):
                 ordered_brains.append(d[s])
             return ordered_brains
 
-        @login_required
 
         def view(request, *args, **kwargs):
             """

@@ -1,27 +1,25 @@
 # -*- coding: utf-8 -*-
 
-from ecm.security.models import ECMRole
-from roles import AUTHENTICATED, ANONYMOUS, OWNER
+from ecm.security.models import ECMRole, Owner, SuperuserRole
+from roles import AUTHENTICATED, ANONYMOUS
 
-def who_what(iterable, user=None, obj=None):
-    for i in iterable:
-        i.user = user
-        i.obj = obj
-    return iterable
 
-def auth(user, obj):
-    if user.is_anonymous():
-        return who_what([ECMRole.objects.get(slug=ANONYMOUS), ], user, obj)
+def superuser(user):
+    if user.is_superuser:
+        return [SuperuserRole(), ]
     else:
-        return who_what([ECMRole.objects.get(slug=AUTHENTICATED), ], user, obj)
-
-
-def owner(user, obj):
-    if user.is_anonymous():
         return []
+
+def auth(user):
+    if user.is_anonymous():
+        slug = ANONYMOUS
     else:
-        for field in ('owner', 'user', ):
-            owner = getattr(obj, 'owner', None)
-            if owner is not None and user == owner:
-                return who_what([ECMRole.objects.get(slug=OWNER), ], user, obj)
+        slug = AUTHENTICATED
+    return ECMRole.objects.filter(slug=slug)
+
+
+def owner(user):
+    if user.is_authenticated():
+        return Owner.objects.filter(user=user)
+    else:
         return []
